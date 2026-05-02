@@ -2,12 +2,10 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import TableOfContents from '../components/TableOfContents.astro';
 import RelatedPosts from '../components/RelatedPosts.astro';
 import { getCollection } from 'astro:content';
 
-// tinaProps shape: { data: { blog: {...} }, variables, query }
-const { data, variables, query } = Astro.props;
+const { data } = Astro.props;
 const blog = data?.blog;
 
 const title       = blog?.title       ?? '';
@@ -43,11 +41,7 @@ const related = allPosts
     <main id="main-content">
       <article class="post-article" aria-label={title}>
 
-        {/* TableOfContents renders an empty nav shell; JS populates it after
-            React hydration via MutationObserver (see TableOfContents.astro) */}
-        <TableOfContents />
-
-        {/* AdminBlogPost renders: hero, date+readingTime, h1, hr, body */}
+        <!-- AdminBlogPost renders: hero, date+readingTime, h1, hr, body -->
         <slot />
 
       </article>

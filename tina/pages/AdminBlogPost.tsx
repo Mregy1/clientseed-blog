@@ -3,6 +3,7 @@ import { tinaField, useTina } from "tinacms/dist/react";
 import type { BlogQuery, BlogQueryVariables } from '../__generated__/types';
 import { TinaMarkdown } from 'tinacms/dist/rich-text';
 import FormattedDate from '../../src/components/react/FormattedDate.tsx';
+import TableOfContents from '../../src/components/react/TableOfContents.tsx';
 
 type Props = {
   variables: BlogQueryVariables;
@@ -75,6 +76,9 @@ export default function AdminBlogPost(props: Props) {
           )}
 
           <hr />
+
+          {/* Table of Contents — placed here, after the title/hr block, before body */}
+          <TableOfContents />
         </div>
 
         {/* Body — data-post-body is used by TOC and mediumZoom */}
