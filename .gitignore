@@ -148,3 +148,6 @@ yarn.lock
 bun.lockb
 deno.lock
 
+
+# Local Netlify folder
+.netlify

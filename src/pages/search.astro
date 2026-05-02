@@ -20,17 +20,23 @@ import config from '../content/config/config.json';
     </main>
     <Footer />
 
-    <!-- FIX: dynamic import ensures pagefind-ui.js is fully loaded before init -->
-    <script>
-      (async () => {
-        await import('/pagefind/pagefind-ui.js');
-        new (window as any).PagefindUI({
-          element: '#search',
-          showImages: true,
-          showEmptyFilters: false,
-          resetStyles: false,
-        });
-      })();
+    <script define:vars={{}}>
+      // Pagefind UI is loaded client-side only; the pagefind directory
+      // is created by astro-pagefind *after* the static build pass.
+      // Using a bare script tag (no import) avoids Vite resolving it at build time.
+      document.addEventListener('DOMContentLoaded', () => {
+        const script = document.createElement('script');
+        script.src = '/pagefind/pagefind-ui.js';
+        script.onload = () => {
+          new window.PagefindUI({
+            element: '#search',
+            showImages: true,
+            showEmptyFilters: false,
+            resetStyles: false,
+          });
+        };
+        document.head.appendChild(script);
+      });
     </script>
   </body>
 </html>
