@@ -14,7 +14,6 @@ const heroImage   = blog?.heroImage   ?? undefined;
 const pubDate     = blog?.pubDate     ? new Date(blog.pubDate)     : undefined;
 const updatedDate = blog?.updatedDate ? new Date(blog.updatedDate) : undefined;
 
-// FIX: use Astro.params.slug — always equals post.id exactly, handles nested paths
 const allPosts = await getCollection('blog');
 const related = allPosts
   .filter(p => p.id !== Astro.params.slug)
@@ -41,7 +40,7 @@ const related = allPosts
     <main id="main-content">
       <article class="post-article" aria-label={title}>
 
-        <!-- AdminBlogPost renders: hero, date+readingTime, h1, hr, body -->
+        <!-- AdminBlogPost renders: hero, date+readingTime, h1, hr, TOC, body -->
         <slot />
 
       </article>
@@ -53,14 +52,12 @@ const related = allPosts
 
     <script>
       import mediumZoom from 'medium-zoom';
-      // FIX: target .prose img to skip the hero image, init after React hydrates
       function initZoom() {
         mediumZoom('.prose [data-post-body] img', {
           margin: 24,
           background: 'rgba(0, 0, 0, 0.85)',
         });
       }
-      // Wait for React hydration — [data-post-body] is rendered by AdminBlogPost
       const target = document.querySelector('[data-post-body]');
       if (target) {
         initZoom();
@@ -95,27 +92,50 @@ const related = allPosts
   }
   :global(.skip-link:focus) { top: 0; }
 
-  /* ── Centered column ────────────────────────────────── */
+  /* ── Content container (relative, houses TOC sidebar + article) ── */
+  main {
+    position: relative;
+  }
+
+  /* ── Article column — centered, 680px ───────────────── */
   .post-article {
-    max-width: 672px;
+    max-width: 680px;
     margin-inline: auto;
     padding: 2rem 1.5rem 4rem;
   }
 
-  /* ── Hero image (rendered by AdminBlogPost) ─────────── */
+  /* ── Hero image — full viewport width, no radius ────── */
   .post-article :global(.hero-image) {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
     margin-bottom: 2rem;
-    margin-inline: -1.5rem;
   }
   .post-article :global(.hero-image img) {
     display: block;
     width: 100%;
     aspect-ratio: 3 / 2;
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: 0;
   }
 
-  /* ── Date + reading time row (rendered by AdminBlogPost) */
+  /* ── TOC sidebar — sticky right of content, >1200px ─── */
+  .post-article :global(.toc) {
+    display: none;
+  }
+
+  @media (min-width: 1200px) {
+    .post-article :global(.toc) {
+      display: block;
+      position: absolute;
+      /* Position sidebar ~2rem to the right of the prose column */
+      right: calc(-1 * (50vw - 680px / 2) - 14rem - 2rem);
+      top: 0;
+      width: 13rem;
+    }
+  }
+
+  /* ── Date + reading time row ── */
   :global(.post-meta-bar) {
     display: flex;
     align-items: center;
@@ -124,10 +144,6 @@ const related = allPosts
     color: rgb(var(--gray));
     margin-bottom: 0.5rem;
   }
-  :global(.reading-time-badge::before) {
-    content: '·';
-    margin-right: 1rem;
-  }
   :global(.updated-notice) {
     font-size: 0.875rem;
     font-style: italic;
@@ -135,7 +151,7 @@ const related = allPosts
     margin: 0.25rem 0 0;
   }
 
-  /* ── Title block ────────────────────────────────────── */
+  /* ── Title block ─────────────────────────────────────── */
   .post-article :global(.prose .title) {
     text-align: left;
     padding: 0;
@@ -162,7 +178,6 @@ const related = allPosts
   .post-article :global(.prose h3) { font-size: 1.3rem; margin-top: 2rem;   margin-bottom: 0.5rem;  }
 
   /* ── Body images: zoom cursor + hover tint ──────────── */
-  /* FIX: scoped to [data-post-body] to exclude the hero */
   .post-article :global([data-post-body] img) {
     cursor: zoom-in;
     border-radius: 8px;
@@ -174,11 +189,11 @@ const related = allPosts
   }
   .post-article :global([data-post-body] img:hover) { filter: brightness(0.87); }
 
-  /* ── medium-zoom overlay ────────────────────────────── */
+  /* ── medium-zoom overlay ──────────────────────────────── */
   :global(.medium-zoom-overlay)       { z-index: 1000; }
   :global(.medium-zoom-image--opened) { z-index: 1001; }
 
-  /* ── Focus styles ───────────────────────────────────── */
+  /* ── Focus styles ────────────────────────────────────── */
   :global(a:focus-visible),
   :global(button:focus-visible) {
     outline: 2px solid var(--accent);
@@ -188,7 +203,7 @@ const related = allPosts
 
   @media (max-width: 720px) {
     .post-article { padding: 1.5rem 1rem 3rem; }
-    .post-article :global(.hero-image) { margin-inline: -1rem; }
+    .post-article :global(.hero-image) { margin-inline: 0; }
     .post-article :global(.prose .title h1) { font-size: 1.8rem; }
     .post-article :global(.prose) { font-size: 1rem; }
   }

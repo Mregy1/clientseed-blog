@@ -11,7 +11,6 @@ type Props = {
   query: string;
 };
 
-// Extract plain text from TinaCMS rich-text AST for reading time
 function extractText(node: any): string {
   if (!node) return '';
   if (typeof node === 'string') return node;
@@ -30,13 +29,12 @@ export default function AdminBlogPost(props: Props) {
 
   const blog = data.blog;
 
-  // Reading time — computed here where blog.body is always available
   const wordCount = extractText(blog.body).split(/\s+/).filter(Boolean).length;
   const readingTime = Math.max(1, Math.round(wordCount / 200));
 
   return (
     <article>
-      {/* Hero image */}
+      {/* Hero image — full viewport width */}
       <div data-tina-field={tinaField(blog, "heroImage")} className="hero-image">
         {blog.heroImage && (
           <img
@@ -58,6 +56,22 @@ export default function AdminBlogPost(props: Props) {
               <FormattedDate date={blog.pubDate} />
             </span>
             <span className="reading-time-badge" aria-label={`${readingTime} minute read`}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+                style={{ verticalAlign: 'middle', marginRight: '4px' }}
+              >
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
               {readingTime} min read
             </span>
           </div>
@@ -77,11 +91,11 @@ export default function AdminBlogPost(props: Props) {
 
           <hr />
 
-          {/* Table of Contents — placed here, after the title/hr block, before body */}
+          {/* Table of Contents — after hr, inside title block */}
           <TableOfContents />
         </div>
 
-        {/* Body — data-post-body is used by TOC and mediumZoom */}
+        {/* Body */}
         <div data-tina-field={tinaField(blog, "body")} data-post-body>
           <TinaMarkdown content={blog.body} />
         </div>

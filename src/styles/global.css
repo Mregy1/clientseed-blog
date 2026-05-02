@@ -43,7 +43,7 @@ body {
   overflow-wrap: break-word;
   color: rgb(var(--gray-dark));
   font-size: 20px;
-  line-height: 1.7;
+  line-height: 1.8;
 }
 main {
   width: 720px;
@@ -140,64 +140,19 @@ hr {
   color: rgb(var(--gray-dark));
 }
 
-/* ── Table of Contents (React component) ── */
-.toc {
-  background: rgba(var(--gray-light), 0.4);
-  border: 1px solid rgb(var(--gray-light));
-  border-radius: 8px;
-  padding: 1rem 1.25rem;
-  margin-bottom: 2rem;
-  font-size: 0.9rem;
-}
-.toc-title {
-  font-weight: 700;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: rgb(var(--gray));
-  margin: 0 0 0.5rem;
-}
-.toc-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-.toc-list a {
-  color: rgb(var(--gray-dark));
-  text-decoration: none;
-  display: block;
-  padding: 2px 0;
-  transition: color 0.15s;
-}
-.toc-list a:hover,
-.toc-list a.active { color: var(--accent); }
-.toc-sub a {
-  padding-left: 1rem;
-  font-size: 0.85rem;
-  color: rgb(var(--gray));
-}
-.toc-sub a:hover,
-.toc-sub a.active { color: var(--accent); }
 
-/* ── Table of Contents (React component) ── */
+
+/* ── TOC Sidebar (sticky right of content on >1200px) ── */
 .toc {
-  background: rgba(var(--gray-light), 0.4);
-  border: 1px solid rgb(var(--gray-light));
-  border-radius: 8px;
-  padding: 1rem 1.25rem;
-  margin-bottom: 2rem;
-  font-size: 0.9rem;
+  display: none;
 }
-.toc-title {
+.toc-heading {
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   color: rgb(var(--gray));
-  margin: 0 0 0.5rem;
+  margin-bottom: 1rem;
 }
 .toc-list {
   list-style: none;
@@ -205,7 +160,7 @@ hr {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.25rem;
 }
 .toc-list a {
   color: rgb(var(--gray-dark));
@@ -215,11 +170,22 @@ hr {
   transition: color 0.15s;
 }
 .toc-list a:hover,
-.toc-list a.active { color: var(--accent); }
-.toc-sub a {
-  padding-left: 1rem;
-  font-size: 0.85rem;
-  color: rgb(var(--gray));
+.toc-list a.active {
+  color: var(--accent);
 }
-.toc-sub a:hover,
-.toc-sub a.active { color: var(--accent); }
+
+@media (min-width: 1200px) {
+  .toc {
+    display: block;
+    position: sticky;
+    top: 6rem;
+    width: 13rem;
+  }
+}
+
+/* ── Reading time badge icon ── */
+.reading-time-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}

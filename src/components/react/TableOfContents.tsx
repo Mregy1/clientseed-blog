@@ -32,7 +32,6 @@ export default function TableOfContents() {
         }
 
         const li = document.createElement('li');
-        li.className = heading.tagName === 'H3' ? 'toc-sub' : '';
 
         const a = document.createElement('a');
         a.href = `#${heading.id}`;
@@ -47,7 +46,6 @@ export default function TableOfContents() {
         list.appendChild(li);
       });
 
-      // Scroll-spy using IntersectionObserver
       const scrollObs = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
@@ -75,7 +73,6 @@ export default function TableOfContents() {
     }
 
     document.addEventListener('astro:page-load', waitForBody);
-    // Run immediately in case the island already rendered
     waitForBody();
   }, []);
 
@@ -87,8 +84,8 @@ export default function TableOfContents() {
       aria-label="Table of contents"
       style={{ display: 'none' }}
     >
-      <p className="toc-title">Contents</p>
-      <ol className="toc-list"></ol>
+      <p className="toc-heading">Contents</p>
+      <ul className="toc-list"></ul>
     </nav>
   );
 }
