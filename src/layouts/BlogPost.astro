@@ -1,63 +1,201 @@
 ---
-import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import RelatedPosts from '../components/RelatedPosts.astro';
+import { getCollection } from 'astro:content';
 
-type Props = CollectionEntry<'blog'>['data'];
+// tinaProps shape: { data: { blog: {...} }, variables, query }
+const { data, variables, query } = Astro.props;
+const blog = data?.blog;
 
-const { title, description } = Astro.props;
+const title       = blog?.title       ?? '';
+const description = blog?.description ?? '';
+const heroImage   = blog?.heroImage   ?? undefined;
+const pubDate     = blog?.pubDate     ? new Date(blog.pubDate)     : undefined;
+const updatedDate = blog?.updatedDate ? new Date(blog.updatedDate) : undefined;
+
+// FIX: use Astro.params.slug — always equals post.id exactly, handles nested paths
+const allPosts = await getCollection('blog');
+const related = allPosts
+  .filter(p => p.id !== Astro.params.slug)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 2);
 ---
 
 <html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-		</style>
-	</head>
+  <head>
+    <BaseHead
+      title={title}
+      description={description}
+      image={heroImage}
+      pubDate={pubDate}
+      updatedDate={updatedDate}
+      type="article"
+    />
+  </head>
 
-	<body>
-		<Header />
-		<main>
-			<slot />
-		</main>
-		<Footer />
-	</body>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <Header />
+
+    <main id="main-content">
+      <article class="post-article" aria-label={title}>
+
+        {/* TableOfContents renders an empty nav shell; JS populates it after
+            React hydration via MutationObserver (see TableOfContents.astro) */}
+        <TableOfContents />
+
+        {/* AdminBlogPost renders: hero, date+readingTime, h1, hr, body */}
+        <slot />
+
+      </article>
+
+      {related.length > 0 && <RelatedPosts posts={related} />}
+    </main>
+
+    <Footer />
+
+    <script>
+      import mediumZoom from 'medium-zoom';
+      // FIX: target .prose img to skip the hero image, init after React hydrates
+      function initZoom() {
+        mediumZoom('.prose [data-post-body] img', {
+          margin: 24,
+          background: 'rgba(0, 0, 0, 0.85)',
+        });
+      }
+      // Wait for React hydration — [data-post-body] is rendered by AdminBlogPost
+      const target = document.querySelector('[data-post-body]');
+      if (target) {
+        initZoom();
+      } else {
+        const obs = new MutationObserver(() => {
+          if (document.querySelector('[data-post-body]')) {
+            obs.disconnect();
+            initZoom();
+          }
+        });
+        obs.observe(document.body, { childList: true, subtree: true });
+      }
+    </script>
+  </body>
 </html>
+
+<style>
+  /* ── Skip link ──────────────────────────────────────── */
+  :global(.skip-link) {
+    position: absolute;
+    top: -100px;
+    left: 1rem;
+    background: var(--accent);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0 0 6px 6px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-decoration: none;
+    z-index: 9999;
+    transition: top 0.2s;
+  }
+  :global(.skip-link:focus) { top: 0; }
+
+  /* ── Centered column ────────────────────────────────── */
+  .post-article {
+    max-width: 672px;
+    margin-inline: auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* ── Hero image (rendered by AdminBlogPost) ─────────── */
+  .post-article :global(.hero-image) {
+    margin-bottom: 2rem;
+    margin-inline: -1.5rem;
+  }
+  .post-article :global(.hero-image img) {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+
+  /* ── Date + reading time row (rendered by AdminBlogPost) */
+  :global(.post-meta-bar) {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: rgb(var(--gray));
+    margin-bottom: 0.5rem;
+  }
+  :global(.reading-time-badge::before) {
+    content: '·';
+    margin-right: 1rem;
+  }
+  :global(.updated-notice) {
+    font-size: 0.875rem;
+    font-style: italic;
+    color: rgb(var(--gray));
+    margin: 0.25rem 0 0;
+  }
+
+  /* ── Title block ────────────────────────────────────── */
+  .post-article :global(.prose .title) {
+    text-align: left;
+    padding: 0;
+    margin-bottom: 2rem;
+  }
+  .post-article :global(.prose .title h1) {
+    font-size: 2.2rem;
+    line-height: 1.2;
+    margin: 0.25rem 0 0.5rem;
+  }
+
+  /* ── Body prose ─────────────────────────────────────── */
+  .post-article :global(.prose) {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: rgb(var(--gray-dark));
+  }
+  .post-article :global(.prose p)  { margin-bottom: 1.6em; }
+  .post-article :global(.prose h2) { font-size: 1.6rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+  .post-article :global(.prose h3) { font-size: 1.3rem; margin-top: 2rem;   margin-bottom: 0.5rem;  }
+
+  /* ── Body images: zoom cursor + hover tint ──────────── */
+  /* FIX: scoped to [data-post-body] to exclude the hero */
+  .post-article :global([data-post-body] img) {
+    cursor: zoom-in;
+    border-radius: 8px;
+    transition: filter 0.2s ease;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 2rem 0;
+  }
+  .post-article :global([data-post-body] img:hover) { filter: brightness(0.87); }
+
+  /* ── medium-zoom overlay ────────────────────────────── */
+  :global(.medium-zoom-overlay)       { z-index: 1000; }
+  :global(.medium-zoom-image--opened) { z-index: 1001; }
+
+  /* ── Focus styles ───────────────────────────────────── */
+  :global(a:focus-visible),
+  :global(button:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  @media (max-width: 720px) {
+    .post-article { padding: 1.5rem 1rem 3rem; }
+    .post-article :global(.hero-image) { margin-inline: -1rem; }
+    .post-article :global(.prose .title h1) { font-size: 1.8rem; }
+    .post-article :global(.prose) { font-size: 1rem; }
+  }
+</style>
