@@ -15,6 +15,8 @@
     "@astrojs/sitemap": "^3.7.0",
     "@tanstack/react-virtual": "^3.13.18",
     "astro": "^5.16.16",
+    "astro-pagefind": "^1.7.0",
+    "medium-zoom": "^1.1.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-icons": "^5.5.0",
