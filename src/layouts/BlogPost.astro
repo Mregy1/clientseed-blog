@@ -320,7 +320,13 @@ const related = allPosts
       width: 220px;
       position: absolute;
       right: 0;
-      top: 2.5rem;
+      top: 0;
+      padding-top: 2.5rem;
+      height: 100%;
+    }
+    .toc-sidebar :global(.toc-inner) {
+      position: sticky;
+      top: 6rem;
     }
   }
 
@@ -352,7 +358,7 @@ const related = allPosts
     padding: 0;
     /* System sans for that dandenney zoom-in feel */
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    font-size: 1.125rem;
+    font-size: 1rem;
     line-height: 1.7;
     color: rgb(var(--gray-dark));
   }
