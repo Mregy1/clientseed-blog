@@ -73,6 +73,9 @@ const related = allPosts
         <!-- ARTICLE BODY — dandenney layout: centered content + side TOC -->
         <div class="article-body">
           
+          <!-- Spacer for TOC area (invisible, reserves space) -->
+          <div class="toc-spacer" aria-hidden="true"></div>
+          
           <!-- Main Content — centered, max-w-3xl -->
           <div class="article-content">
             <!-- Reading time + metadata -->
@@ -95,7 +98,7 @@ const related = allPosts
             <Breadcrumb postTitle={title} />
           </div>
 
-          <!-- TOC Sidebar — positioned absolute to the right -->
+          <!-- TOC Sidebar — positioned in the right column -->
           <div class="toc-sidebar" id="toc-sidebar">
             <TableOfContents client:load />
           </div>
@@ -290,39 +293,52 @@ const related = allPosts
     opacity: 0.8;
   }
 
-  /* ── Article Body — dandenney layout ───────────────── */
+  /* ── Article Body — CSS Grid layout ───────────────── */
   .article-body {
-    position: relative;
-    max-width: 1200px;
+    display: grid;
+    grid-template-columns: 1fr minmax(auto, 768px) 1fr;
+    gap: 0;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 2rem;
+    align-items: start;
   }
   
-  /* Main content — centered, max-w-3xl like dandenney */
+  /* Spacer for TOC on right side */
+  .toc-spacer {
+    display: none;
+  }
+
+  /* Main content — centered in middle column */
   .article-content {
     width: 100%;
     max-width: 768px;
     margin: 0 auto;
     padding: 2.5rem 1rem 5rem;
+    grid-column: 2;
   }
 
-  /* ── TOC Sidebar — absolute positioned to the right ──── */
+  /* ── TOC Sidebar — positioned in right column ────── */
   .toc-sidebar {
     display: none;
   }
   @media (min-width: 1200px) {
+    .article-body {
+      grid-template-columns: 1fr minmax(auto, 768px) 260px;
+    }
+    .toc-spacer {
+      display: block;
+      grid-column: 3;
+    }
     .toc-sidebar {
       display: block;
+      grid-column: 3;
+      grid-row: 1;
       width: 220px;
-      position: absolute;
-      right: 2rem;
-      top: 0;
       padding-top: 2.5rem;
-      height: 100%;
-    }
-    .toc-sidebar :global(.toc-inner) {
       position: sticky;
       top: 6rem;
+      justify-self: start;
     }
   }
 
