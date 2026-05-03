@@ -45,12 +45,14 @@ const related = allPosts
         
         <!-- HERO HEADER: Title over image (dandenney style) -->
         <header class="post-hero">
+  <!-- Background Image with responsive srcset -->
           <img 
             class="hero-image" 
             src={heroImage} 
             alt="" 
             loading="eager"
             decoding="async"
+            sizes="(max-width: 720px) 100vw, 1200px"
           />
           <div class="hero-overlay"></div>
           
@@ -232,6 +234,16 @@ const related = allPosts
     height: 100%;
     object-fit: cover;
     z-index: 0;
+  }
+
+  /* Only apply hover effects on devices that support hover */
+  @media (hover: hover) {
+    .post-hero .hero-image {
+      transition: transform 0.5s ease;
+    }
+    .post-hero:hover .hero-image {
+      transform: scale(1.03);
+    }
   }
   .hero-overlay {
     position: absolute;
@@ -426,6 +438,13 @@ const related = allPosts
     border-radius: 8px;
     margin: 2rem 0;
     display: block;
+  }
+
+  /* Only apply hover effects on devices that support hover */
+  @media (hover: hover) {
+    .prose-content :global(img:hover) {
+      cursor: zoom-in;
+    }
   }
   .prose-content :global(figure) {
     margin: 2rem 0;

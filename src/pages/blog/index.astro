@@ -11,6 +11,18 @@ const posts = (await getCollection('blog')).sort(
 );
 
 const postCount = posts.length;
+
+// Blog Roll — curated list of external blogs
+const blogRoll = [
+	{ name: 'CSS-Tricks', url: 'https://css-tricks.com' },
+	{ name: 'Smashing Magazine', url: 'https://www.smashingmagazine.com' },
+	{ name: 'A List Apart', url: 'https://alistapart.com' },
+	{ name: 'Jeremy Keith', url: 'https://adactio.com' },
+	{ name: 'Sara Soueidan', url: 'https://www.sarasoueidan.com' },
+	{ name: 'Josh Comeau', url: 'https://www.joshwcomeau.com' },
+	{ name: 'Astro Blog', url: 'https://astro.build/blog' },
+	{ name: 'Vercel Blog', url: 'https://vercel.com/blog' },
+];
 ---
 
 <!doctype html>
@@ -32,6 +44,28 @@ const postCount = posts.length;
 				</div>
 			</section>
 
+			<!-- Intro Grid: Quote + Blog Roll -->
+			<section class="intro-grid">
+				<div class="intro-left">
+					<blockquote class="featured-quote">
+						<p>"Write the article you wish you found when you googled something."</p>
+						<cite>— Chris Coyier</cite>
+					</blockquote>
+				</div>
+				<div class="intro-right">
+					<h3 class="blog-roll-heading">Blogs I Read</h3>
+					<ul class="blog-roll">
+						{blogRoll.map((blog) => (
+							<li>
+								<a href={blog.url} target="_blank" rel="noopener noreferrer" class="blog-roll-link">
+									{blog.name}
+								</a>
+							</li>
+						))}
+					</ul>
+				</div>
+			</section>
+
 			<!-- Posts Grid -->
 			<section class="posts-grid-section">
 				<div class="posts-grid">
@@ -42,13 +76,14 @@ const postCount = posts.length;
 									<span class="sr-only">Read {post.data.title}</span>
 								</a>
 								
-								<!-- Background Image -->
+								<!-- Background Image with responsive srcset -->
 								<img 
 									class="card-image" 
 									src={post.data.heroImage} 
 									alt="" 
 									loading="lazy" 
 									decoding="async"
+									sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
 								/>
 								
 								<!-- Gradient Overlay -->
@@ -108,16 +143,100 @@ const postCount = posts.length;
 		margin: 0 0 1rem;
 	}
 	.page-description {
-		font-family: 'Lora', Georgia, serif;
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 		font-size: 1.1rem;
 		line-height: 1.7;
 		color: rgb(var(--gray));
 		margin: 0;
 	}
 
+	/* ── Intro Grid (Quote + Blog Roll) ───────────────── */
+	.intro-grid {
+		max-width: 768px;
+		margin: 0 auto;
+		padding: 2rem;
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 2rem;
+		border-top: 1px solid rgb(var(--gray-light));
+		border-bottom: 1px solid rgb(var(--gray-light));
+	}
+	.intro-left {
+		display: flex;
+		align-items: center;
+	}
+	.featured-quote {
+		margin: 0;
+		padding: 0;
+		border: none;
+		font-style: italic;
+	}
+	.featured-quote p {
+		font-family: 'Lora', Georgia, serif;
+		font-size: 1.125rem;
+		line-height: 1.6;
+		color: rgb(var(--gray-dark));
+		margin: 0 0 0.5rem;
+	}
+	.featured-quote cite {
+		font-family: 'Montserrat', sans-serif;
+		font-size: 0.875rem;
+		color: rgb(var(--gray));
+		font-style: normal;
+		font-weight: 500;
+	}
+	.intro-right {
+		padding-left: 0;
+		border-left: none;
+	}
+	.blog-roll-heading {
+		font-family: 'Montserrat', sans-serif;
+		font-weight: 700;
+		font-size: 0.7rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: rgb(var(--gray));
+		margin: 0 0 0.75rem;
+	}
+	.blog-roll {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+	.blog-roll li {
+		margin: 0;
+	}
+	.blog-roll-link {
+		font-family: 'Montserrat', sans-serif;
+		font-size: 0.8125rem;
+		font-weight: 500;
+		color: var(--accent);
+		text-decoration: none;
+		padding: 0.25rem 0.5rem;
+		border-radius: 4px;
+		transition: background 0.15s, color 0.15s;
+	}
+	.blog-roll-link:hover {
+		background: rgba(var(--gray-light), 0.5);
+		text-decoration: underline;
+	}
+	@media (min-width: 640px) {
+		.intro-grid {
+			grid-template-columns: 1.2fr 1fr;
+			gap: 3rem;
+		}
+		.intro-right {
+			padding-left: 2rem;
+			border-left: 1px solid rgb(var(--gray-light));
+		}
+	}
+
 	/* ── Posts Grid ────────────────────────────────────── */
 	.posts-grid-section {
-		padding: 2rem;
+		padding: 0 2rem 2rem;
 		max-width: 1800px;
 		margin: 0 auto;
 	}
@@ -141,7 +260,6 @@ const postCount = posts.length;
 		min-height: 320px;
 		padding: 1.5rem;
 		border-bottom: 1px solid rgb(var(--gray-light));
-		transition: box-shadow 0.3s ease;
 	}
 	.post-card:last-child {
 		border-bottom: none;
@@ -200,7 +318,7 @@ const postCount = posts.length;
 		transition: transform 0.3s ease;
 	}
 	.card-description {
-		font-family: 'Lora', Georgia, serif;
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 		font-size: 0.875rem;
 		line-height: 1.5;
 		color: rgba(255, 255, 255, 0.8);
@@ -221,7 +339,7 @@ const postCount = posts.length;
 		text-transform: uppercase;
 	}
 
-	/* ── Hover Effects ────────────────────────────────── */
+	/* ── Hover Effects with conditional hover ─────────── */
 	@media (hover: hover) {
 		.post-card:hover {
 			box-shadow: 0 4px 20px rgba(var(--gray), 0.3);
