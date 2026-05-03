@@ -1,0 +1,57 @@
+---
+interface Props {
+  src: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+  loading?: 'eager' | 'lazy';
+  class?: string;
+  sizes?: string;
+}
+
+const { 
+  src, 
+  alt = '', 
+  width, 
+  height,
+  loading = 'lazy',
+  class: className = '',
+  sizes = '(max-width: 720px) 100vw, 1200px'
+} = Astro.props;
+
+// Generate Cloudinary optimized URL
+function getOptimizedUrl(imageSrc: string, w?: number): string {
+  // If Cloudinary URL, add optimization
+  if (imageSrc.includes('cloudinary.com') || imageSrc.includes('res.cloudinary.com')) {
+    const baseUrl = imageSrc.split('/upload/')[0] + '/upload/';
+    const imagePath = imageSrc.split('/upload/')[1];
+    const transforms = ['f_auto', 'q_auto'];
+    if (w) transforms.push(`w_${w}`);
+    return `${baseUrl}${transforms.join(',')}/${imagePath}`;
+  }
+  return imageSrc;
+}
+
+function getSrcset(imageSrc: string): string {
+  if (!imageSrc.includes('cloudinary.com') && !imageSrc.includes('res.cloudinary.com')) {
+    return imageSrc;
+  }
+  const widths = [375, 768, 1200];
+  return widths.map(w => `${getOptimizedUrl(imageSrc, w)} ${w}w`).join(', ');
+}
+
+const optimizedSrc = getOptimizedUrl(src, width);
+const srcset = getSrcset(src);
+---
+
+<img 
+  src={optimizedSrc}
+  srcset={srcset.includes('cloudinary') ? srcset : undefined}
+  sizes={srcset.includes('cloudinary') ? sizes : undefined}
+  alt={alt}
+  width={width}
+  height={height}
+  loading={loading}
+  decoding="async"
+  class={className}
+/>

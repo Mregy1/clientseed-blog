@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import RelatedPosts from '../components/RelatedPosts.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import TableOfContents from '../components/react/TableOfContents';
+import OptimizedImage from '../components/OptimizedImage.astro';
 import { getCollection } from 'astro:content';
 
 const { data } = Astro.props;
@@ -45,13 +46,11 @@ const related = allPosts
         
         <!-- HERO HEADER: Title over image (dandenney style) -->
         <header class="post-hero">
-  <!-- Background Image with responsive srcset -->
-          <img 
+          <OptimizedImage 
             class="hero-image" 
             src={heroImage} 
             alt="" 
             loading="eager"
-            decoding="async"
             sizes="(max-width: 720px) 100vw, 1200px"
           />
           <div class="hero-overlay"></div>
@@ -300,8 +299,9 @@ const related = allPosts
   .post-body-wrapper {
     position: relative;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 0;
+    padding-right: 260px; /* space for TOC sidebar */
   }
   .post-content {
     width: 100%;
@@ -319,7 +319,7 @@ const related = allPosts
       display: block;
       width: 220px;
       position: absolute;
-      right: 0;
+      right: 2rem;
       top: 0;
       padding-top: 2.5rem;
       height: 100%;
