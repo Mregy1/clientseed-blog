@@ -46,10 +46,10 @@ body {
   line-height: 1.8;
 }
 main {
-  width: 720px;
-  max-width: calc(100% - 2em);
-  margin: auto;
-  padding: 3em 1em;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
 }
 h1, h2, h3, h4, h5, h6 {
   margin: 0 0 0.5rem 0;
@@ -94,7 +94,7 @@ hr {
 
 @media (max-width: 720px) {
   body { font-size: 18px; }
-  main { padding: 1em; }
+  main { padding: 0; }
 }
 
 /* ── Accessibility ───────────────────────────────────── */
@@ -140,7 +140,13 @@ hr {
   color: rgb(var(--gray-dark));
 }
 
-
+/* ── H1 inside post body — same size as h2 ────────────── */
+[data-post-body] h1 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+}
 
 /* ── TOC Sidebar ── */
 /* Hidden by default (React sets .toc-visible when headings are found) */
@@ -176,12 +182,14 @@ hr {
   color: var(--accent);
 }
 
-/* On >1200px: sidebar positioned absolutely right of content column */
+/* On >1200px: fixed sidebar to the right of the content column */
 @media (min-width: 1200px) {
   .toc.toc-visible {
     display: block;
-    position: sticky;
-    top: 6rem;
+    position: fixed;
+    top: 120px;
+    right: 2rem;
+    width: 200px;
     border-left: 2px solid rgb(var(--gray-light));
     padding-left: 1rem;
   }
