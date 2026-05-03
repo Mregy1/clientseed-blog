@@ -125,27 +125,7 @@ const related = allPosts
     border-radius: 0;
   }
 
-  /* ── TOC sidebar — absolutely positioned right of content */
-  /* On >1200px: sticky sidebar to the right of the article */
-  .post-article :global(.toc) {
-    display: none;
-  }
-
-  @media (min-width: 1200px) {
-    .post-article :global(.toc) {
-      display: block;
-      position: absolute;
-      right: 0;
-      top: 2rem;
-      width: 13rem;
-    }
-
-    .post-article :global(.toc .toc-sticky),
-    .post-article :global(.toc.toc-visible) {
-      position: sticky;
-      top: 6rem;
-    }
-  }
+  /* ── TOC sidebar positioning handled by global.css ── */
 
   /* ── Date + reading time row ── */
   :global(.post-meta-bar) {
