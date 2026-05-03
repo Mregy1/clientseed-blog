@@ -5,7 +5,7 @@
 - [ ] Recent posts card grid (3-col responsive)
 - [ ] Side projects / Tinkerings section
 - [ ] Blips / micro-posts section
-- [ ] Sticky footer with social links + scale hover
+- [x] Sticky footer with social links + scale hover
 - [ ] CTA sections between grids
 
 ## Posts Listing Page (/blog)
@@ -22,11 +22,11 @@
 - [x] Reading progress bar
 - [x] Related posts
 - [x] Montserrat headings + Lora body
-- [ ] View transitions (Astro ClientRouter)
+- [x] View transitions (Astro ClientRouter)
 - [ ] Conditional hover: `@media(hover:hover)`
 
 ## Global
-- [ ] Dark mode toggle (sun/moon icons, localStorage)
+- [x] Dark mode toggle (sun/moon icons, localStorage)
 - [ ] Tailwind `dark:` prefix system
 - [ ] Color system: red-700 accent, slate-900 dark bg
 - [ ] Focus rings: red-700 outline
@@ -34,7 +34,7 @@
 - [ ] Lazy loading + `decoding="async"`
 - [ ] RSS feed (multiple if needed)
 - [ ] Schema.org structured data (Person, BlogPosting)
-- [ ] View transitions (Astro ClientRouter)
+- [x] View transitions (Astro ClientRouter)
 
 ## Multi-Content Types (Future)
 - [ ] Blips collection (short-form)

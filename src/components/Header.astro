@@ -5,64 +5,224 @@ import IconLink from "./react/IconLink";
 ---
 
 <header>
-	<nav>
-		<h2><a href="/">{config.seo.title}</a></h2>
-		<div class="internal-links">
-			{
-				config.nav.map((nav) => (
-					<HeaderLink href={nav.link}>{nav.title}</HeaderLink>
-				))
-			}
+	<nav aria-label="Global">
+		<div class="flex items-center">
+			<a href="/" class="logo-link" aria-label={config.seo.title}>
+				<span class="sr-only">{config.seo.title}</span>
+				<!-- SVG Logo placeholder - replace with your own avatar/logo -->
+				<svg class="logo-svg" width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" role="img">
+					<title>{config.seo.title} Logo</title>
+					<circle cx="24" cy="24" r="22" fill="rgb(var(--gray-dark))" />
+					<text x="24" y="30" text-anchor="middle" fill="white" font-family="Montserrat, sans-serif" font-weight="900" font-size="20">C</text>
+				</svg>
+			</a>
+			<div class="internal-links">
+				{
+					config.nav.map((nav) => (
+						<HeaderLink href={nav.link}>{nav.title}</HeaderLink>
+					))
+				}
+			</div>
 		</div>
-		<div class="social-links">
-			{
-				config?.contactLinks?.map((link) => {
-					return (
-						<IconLink {...link} />
-					);
-				})
-			}
+		<div class="header-right">
+			<!-- Dark Mode Toggle -->
+			<button type="button" id="themeToggle" aria-label="Toggle dark mode" class="theme-toggle">
+				<svg class="sun-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<path d="M8 12.25A4.25 4.25 0 0 1 12.25 8v0a4.25 4.25 0 0 1 4.25 4.25v0a4.25 4.25 0 0 1-4.25 4.25v0A4.25 4.25 0 0 1 8 12.25v0Z" fill="none"/>
+					<path d="M12.25 3v1.5M21.5 12.25H20M18.791 18.791l-1.06-1.06M18.791 5.709l-1.06 1.06M12.25 20v1.5M4.5 12.25H3M6.77 6.77 5.709 5.709M6.77 17.73l-1.061 1.061" fill="none"/>
+				</svg>
+				<svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true">
+					<path d="M17.25 16.22a6.937 6.937 0 0 1-9.47-9.47 7.451 7.451 0 1 0 9.47 9.47ZM12.75 7C17 7 17 2.75 17 2.75S17 7 21.25 7C17 7 17 11.25 17 11.25S17 7 12.75 7Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+				</svg>
+			</button>
+			<div class="social-links">
+				{
+					config?.contactLinks?.map((link) => {
+						return (
+							<IconLink {...link} />
+						);
+					})
+				}
+			</div>
 		</div>
 	</nav>
 </header>
+
+<script is:inline>
+	// Dark mode toggle
+	(function() {
+		const themeToggle = document.getElementById('themeToggle');
+		if (!themeToggle) return;
+
+		const html = document.documentElement;
+		
+		function getTheme() {
+			if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+				return localStorage.getItem('theme');
+			}
+			if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+				return 'dark';
+			}
+			return 'light';
+		}
+
+		function setTheme(theme) {
+			if (theme === 'dark') {
+				html.classList.add('dark');
+			} else {
+				html.classList.remove('dark');
+			}
+			localStorage.setItem('theme', theme);
+		}
+
+		// Initialize on load
+		const currentTheme = getTheme();
+		setTheme(currentTheme);
+
+		// Toggle on click
+		themeToggle.addEventListener('click', () => {
+			const isDark = html.classList.contains('dark');
+			setTheme(isDark ? 'light' : 'dark');
+		});
+	})();
+</script>
+
 <style>
 	header {
 		margin: 0;
-		padding: 0 1em;
+		padding: 0;
 		background: white;
 		box-shadow: 0 2px 8px rgba(var(--black), 5%);
+		position: relative;
+		z-index: 100;
 	}
-	h2 {
-		margin: 0;
-		font-size: 1em;
-	}
-
-	h2 a,
-	h2 a.active {
-		text-decoration: none;
+	.dark header {
+		background: rgb(var(--gray-dark));
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 	}
 	nav {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		max-width: 1536px;
+		margin: 0 auto;
+		padding: 0.75rem 1rem;
 	}
-	nav a {
-		padding: 1em 0.5em;
-		color: var(--black);
+	.flex {
+		display: flex;
+		align-items: center;
+	}
+	.logo-link {
+		display: block;
+		transition: transform 0.2s ease;
+		border-radius: 50%;
+	}
+	.logo-link:hover {
+		transform: scale(1.05);
+	}
+	.logo-svg {
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+	}
+	.internal-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.5rem;
+		margin-left: 1.5rem;
+	}
+	.internal-links a {
+		padding: 0.5em 0;
+		color: rgb(var(--black));
 		border-bottom: 4px solid transparent;
 		text-decoration: none;
+		font-size: 0.875rem;
+		font-weight: 600;
+		line-height: 1.5;
+		transition: color 0.15s, border-color 0.15s;
+		border-radius: 2px;
 	}
-	nav a.active {
-		text-decoration: none;
+	.dark .internal-links a {
+		color: rgb(var(--gray-light));
+	}
+	.internal-links a:hover {
+		color: var(--accent);
+	}
+	.internal-links a.active {
 		border-bottom-color: var(--accent);
+	}
+	.header-right {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+	.theme-toggle {
+		width: 36px;
+		height: 36px;
+		border-radius: 50%;
+		border: 1px solid rgb(var(--gray-light));
+		background: white;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+		transition: background 0.2s, border-color 0.2s;
+	}
+	.dark .theme-toggle {
+		background: rgb(51, 65, 85);
+		border-color: rgb(71, 85, 105);
+	}
+	.theme-toggle:hover {
+		border-color: rgb(var(--gray));
+	}
+	.theme-toggle svg {
+		width: 20px;
+		height: 20px;
+	}
+	.sun-icon {
+		display: block;
+		stroke: rgb(var(--gray));
+		fill: none;
+	}
+	.dark .sun-icon {
+		display: none;
+	}
+	.moon-icon {
+		display: none;
+		stroke: rgb(var(--gray-light));
+		fill: rgb(var(--gray-light));
+	}
+	.dark .moon-icon {
+		display: block;
 	}
 	.social-links,
 	.social-links a {
 		display: flex;
 	}
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
 	@media (max-width: 720px) {
 		.social-links {
 			display: none;
+		}
+		.internal-links {
+			margin-left: 0.75rem;
+			gap: 0.5rem 1rem;
+		}
+	}
+	@media (hover: hover) {
+		.internal-links a:hover {
+			color: var(--accent);
 		}
 	}
 </style>

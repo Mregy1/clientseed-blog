@@ -39,27 +39,73 @@ const related = allPosts
     <a href="#main-content" class="skip-link">Skip to main content</a>
     <Header />
 
-    <main id="main-content">
-      <!-- .post-article-wrapper is the relative container for sidebar TOC positioning -->
-      <div class="post-article-wrapper">
-        <article class="post-article" aria-label={title}>
+    <main id="main-content" class="main-content">
+      <article class="post-article toc-scope" aria-label={title}>
+        
+        <!-- HERO HEADER: Title over image (dandenney style) -->
+        <header class="post-hero">
+          <img 
+            class="hero-image" 
+            src={heroImage} 
+            alt="" 
+            loading="eager"
+            decoding="async"
+          />
+          <div class="hero-overlay"></div>
+          
+          <div class="hero-content">
+            <div class="post-meta-bar">
+              {pubDate && (
+                <span class="post-date">
+                  {pubDate.toLocaleDateString('en-us', { year: 'numeric', month: 'short', day: 'numeric' })}
+                </span>
+              )}
+              {updatedDate && (
+                <span class="updated-notice">Updated: {updatedDate.toLocaleDateString('en-us', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+              )}
+            </div>
+            <h1 class="post-title">{title}</h1>
+          </div>
+        </header>
 
-          <!-- AdminBlogPost renders: hero, date+readingTime, h1, hr, body, TOC -->
-          <slot />
+        <!-- ARTICLE BODY -->
+        <div class="post-body-wrapper">
+          <!-- TOC Sidebar -->
+          <div class="toc-sidebar" id="toc-sidebar"></div>
 
-          <!-- Breadcrumb navigation at end of post -->
-          <Breadcrumb postTitle={title} />
+          <!-- Main Content -->
+          <div class="post-content">
+            <!-- Reading time + metadata -->
+            <div class="reading-time-bar">
+              <span class="reading-time-badge">
+                <svg class="clock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <span id="reading-time"></span>
+              </span>
+            </div>
 
-        </article>
+            <!-- TinaCMS content renders here -->
+            <div class="prose-content" data-post-body>
+              <slot />
+            </div>
 
+            <!-- Breadcrumb at bottom -->
+            <Breadcrumb postTitle={title} />
+          </div>
+        </div>
+
+        <!-- Related Posts -->
         {related.length > 0 && <RelatedPosts posts={related} />}
-      </div>
+
+      </article>
     </main>
 
     <Footer />
 
+    <!-- Reading progress bar -->
     <script is:inline>
-      // Reading progress bar — runs immediately, no module bundling needed
       (function () {
         var bar = document.getElementById('reading-progress');
         function update() {
@@ -75,31 +121,50 @@ const related = allPosts
         update();
       })();
     </script>
+
+    <!-- Reading time calculation -->
+    <script is:inline>
+      (function() {
+        var postBody = document.querySelector('[data-post-body]');
+        if (!postBody) return;
+        var text = postBody.textContent || '';
+        var words = text.trim().split(/\s+/).length;
+        var minutes = Math.ceil(words / 200);
+        var badge = document.getElementById('reading-time');
+        if (badge) {
+          badge.textContent = minutes + ' min read';
+        }
+      })();
+    </script>
+
+    <!-- Medium zoom for images -->
     <script>
       import mediumZoom from 'medium-zoom';
       function initZoom() {
-        mediumZoom('.prose [data-post-body] img', {
+        mediumZoom('[data-post-body] img', {
           margin: 24,
           background: 'rgba(0, 0, 0, 0.85)',
         });
       }
-      const target = document.querySelector('[data-post-body]');
-      if (target) {
+      if (document.querySelector('[data-post-body]')) {
         initZoom();
-      } else {
-        const obs = new MutationObserver(() => {
-          if (document.querySelector('[data-post-body]')) {
-            obs.disconnect();
-            initZoom();
-          }
-        });
-        obs.observe(document.body, { childList: true, subtree: true });
       }
     </script>
   </body>
 </html>
 
 <style>
+  /* ── Main Content Area ─────────────────────────────── */
+  .main-content {
+    background: white;
+    position: relative;
+    z-index: 10;
+  }
+  .dark .main-content {
+    background: rgb(15, 23, 42); /* slate-900 */
+    color: rgb(226, 232, 240); /* slate-200 */
+  }
+
   /* ── Reading progress bar ───────────────────────────── */
   :global(#reading-progress) {
     position: fixed;
@@ -131,89 +196,141 @@ const related = allPosts
   }
   :global(.skip-link:focus) { top: 0; }
 
-  /* ── Outer wrapper — wide enough to hold article + TOC side by side */
-  .post-article-wrapper {
-    position: relative;
-    /* 768px article + 2×240px TOC gutters = 1248px total */
-    max-width: 1248px;
-    margin: 0 auto;
-    padding: 0 2rem;
-  }
-
-  /* ── Article column — matches cloned site max-w-3xl (768px) ── */
+  /* ── Post Article ───────────────────────────────────── */
   .post-article {
-    max-width: 768px;
-    margin-inline: auto;
-    padding: 2.5rem 0 5rem;
+    width: 100%;
+    max-width: 100%;
   }
 
-  /* ── Hero image — full viewport width ───────────────── */
-  .post-article :global(.hero-image) {
-    width: 100vw;
-    margin-left: calc(-50vw + 50%);
-    margin-right: calc(-50vw + 50%);
-    margin-bottom: 2.5rem;
-  }
-  .post-article :global(.hero-image img) {
-    display: block;
+  /* ── Hero Header (dandenney style: title over image) ─ */
+  .post-hero {
+    position: relative;
     width: 100%;
     aspect-ratio: 3 / 2;
+    max-height: 600px;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+  }
+  .hero-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border-radius: 0;
+    z-index: 0;
   }
-
-  /* ── Date + reading time row ── */
-  :global(.post-meta-bar) {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 0.875rem;
-    color: rgb(var(--gray));
-    margin-bottom: 0.75rem;
-    font-family: 'Montserrat', sans-serif;
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(var(--black), 0.6);
+    z-index: 1;
+    transition: opacity 0.3s;
   }
-  :global(.updated-notice) {
-    font-size: 0.875rem;
-    font-style: italic;
-    color: rgb(var(--gray));
-    margin: 0.25rem 0 0;
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
   }
-
-  /* ── Post title — Montserrat black, tight tracking ───── */
-  .post-article :global(.prose .title) {
-    text-align: left;
-    padding: 0;
-    margin-bottom: 2rem;
-  }
-  .post-article :global(.prose .title h1) {
+  .post-title {
     font-family: 'Montserrat', sans-serif;
     font-weight: 900;
     font-size: 2.6rem;
     line-height: 1.1;
     letter-spacing: -0.02em;
-    margin: 0.25rem 0 0.5rem;
-    color: rgb(var(--black));
+    color: white;
+    margin: 0.5rem 0 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+  .post-meta-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1rem;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .post-date {
+    font-weight: 500;
+  }
+  .updated-notice {
+    font-style: italic;
+    opacity: 0.8;
   }
 
-  /* ── Body prose — Lora serif, generous size ─────────── */
-  .post-article :global(.prose) {
+  /* ── Body Layout ───────────────────────────────────── */
+  .post-body-wrapper {
+    position: relative;
+    max-width: 1248px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    gap: 2rem;
+  }
+  .post-content {
+    flex: 1;
+    max-width: 768px;
+    margin: 0 auto;
+    padding: 2.5rem 0 5rem;
+  }
+
+  /* ── TOC Sidebar ───────────────────────────────────── */
+  .toc-sidebar {
+    display: none;
+  }
+  @media (min-width: 1200px) {
+    .toc-sidebar {
+      display: block;
+      width: 220px;
+      flex-shrink: 0;
+      position: relative;
+    }
+  }
+
+  /* ── Reading Time ──────────────────────────────────── */
+  .reading-time-bar {
+    margin-bottom: 1.5rem;
+  }
+  .reading-time-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: rgb(var(--gray));
+    font-family: 'Montserrat', sans-serif;
+  }
+  .dark .reading-time-badge {
+    color: rgb(var(--gray-light));
+  }
+  .clock-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ── Prose Content (System Sans — dandenney style) ─── */
+  .prose-content {
     width: 100%;
     max-width: 100%;
     margin: 0;
     padding: 0;
-    /* Lora = the serif font from Google Fonts we loaded */
-    font-family: 'Lora', Georgia, serif;
-    font-size: 1.2rem;        /* ~19px — "zoomed in" reading feel */
-    line-height: 1.85;
+    /* System sans for that dandenney zoom-in feel */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.7;
     color: rgb(var(--gray-dark));
   }
-  .post-article :global(.prose p) {
-    margin-bottom: 1.75em;
+  .dark .prose-content {
+    color: rgb(226, 232, 240);
   }
-
-  /* ── In-body headings — Montserrat, left-aligned ────── */
-  .post-article :global(.prose h2),
-  .post-article :global([data-post-body] h2) {
+  .prose-content :global(p) {
+    margin-bottom: 1.5em;
+  }
+  .prose-content :global(h2) {
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     font-size: 1.6rem;
@@ -222,8 +339,10 @@ const related = allPosts
     margin-bottom: 0.75rem;
     color: rgb(var(--black));
   }
-  .post-article :global(.prose h3),
-  .post-article :global([data-post-body] h3) {
+  .dark .prose-content :global(h2) {
+    color: white;
+  }
+  .prose-content :global(h3) {
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     font-size: 1.25rem;
@@ -231,26 +350,112 @@ const related = allPosts
     margin-bottom: 0.5rem;
     color: rgb(var(--black));
   }
-
-  /* ── Body images ─────────────────────────────────────── */
-  .post-article :global([data-post-body] img) {
-    cursor: zoom-in;
+  .dark .prose-content :global(h3) {
+    color: white;
+  }
+  .prose-content :global(a) {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.15s;
+  }
+  .prose-content :global(a:hover) {
+    color: var(--accent-dark);
+    text-decoration: underline;
+  }
+  .prose-content :global(blockquote) {
+    border-left: 4px solid var(--accent);
+    padding: 0 0 0 20px;
+    margin: 2rem 0;
+    font-size: 1.125rem;
+    font-style: italic;
+    color: rgb(var(--gray));
+  }
+  .dark .prose-content :global(blockquote) {
+    color: rgb(var(--gray-light));
+  }
+  .prose-content :global(pre) {
+    padding: 1.5em;
     border-radius: 8px;
-    transition: transform 0.2s ease;
+    background: rgb(var(--gray-dark));
+    overflow-x: auto;
+  }
+  .dark .prose-content :global(pre) {
+    background: rgb(30, 41, 59);
+  }
+  .prose-content :global(code) {
+    padding: 2px 6px;
+    background: rgb(var(--gray-light));
+    border-radius: 4px;
+    font-size: 0.875em;
+  }
+  .dark .prose-content :global(code) {
+    background: rgb(51, 65, 85);
+    color: rgb(226, 232, 240);
+  }
+  .prose-content :global(pre > code) {
+    background: none;
+    padding: 0;
+    color: rgb(var(--gray-light));
+  }
+  .prose-content :global(ul),
+  .prose-content :global(ol) {
+    margin-bottom: 1.5em;
+    padding-left: 1.5em;
+  }
+  .prose-content :global(li) {
+    margin-bottom: 0.5em;
+  }
+  .prose-content :global(img) {
     max-width: 100%;
     height: auto;
+    border-radius: 8px;
+    margin: 2rem 0;
     display: block;
+  }
+  .prose-content :global(figure) {
+    margin: 2rem 0;
+  }
+  .prose-content :global(figcaption) {
+    font-size: 0.875rem;
+    color: rgb(var(--gray));
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+  .prose-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+  }
+  .prose-content :global(th),
+  .prose-content :global(td) {
+    padding: 0.75rem;
+    border-bottom: 1px solid rgb(var(--gray-light));
+    text-align: left;
+  }
+  .prose-content :global(th) {
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgb(var(--gray));
+  }
+  .prose-content :global(hr) {
+    border: none;
+    border-top: 1px solid rgb(var(--gray-light));
     margin: 2.5rem 0;
   }
-  .post-article :global([data-post-body] img:hover) {
-    transform: scale(1.02);
+
+  /* ── Medium Zoom ───────────────────────────────────── */
+  :global(.medium-zoom-overlay) {
+    z-index: 1000;
+  }
+  :global(.medium-zoom-image--opened) {
+    z-index: 1001;
   }
 
-  /* ── medium-zoom overlay ──────────────────────────────── */
-  :global(.medium-zoom-overlay)       { z-index: 1000; }
-  :global(.medium-zoom-image--opened) { z-index: 1001; }
-
-  /* ── Focus styles ────────────────────────────────────── */
+  /* ── Focus Styles ──────────────────────────────────── */
   :global(a:focus-visible),
   :global(button:focus-visible) {
     outline: 2px solid var(--accent);
@@ -258,17 +463,28 @@ const related = allPosts
     border-radius: 3px;
   }
 
+  /* ── Responsive ─────────────────────────────────────── */
   @media (max-width: 720px) {
-    .post-article-wrapper { padding: 0 1.25rem; }
-    .post-article { padding: 1.5rem 0 3rem; }
-    .post-article :global(.hero-image) {
-      width: 100vw;
-      margin-left: calc(-50vw + 50%);
-      margin-right: calc(-50vw + 50%);
+    .post-hero {
+      aspect-ratio: 4 / 3;
+      max-height: 400px;
     }
-    .post-article :global(.prose .title h1) {
-      font-size: 2rem;
+    .post-title {
+      font-size: 1.8rem;
     }
-    .post-article :global(.prose) { font-size: 1.05rem; }
+    .post-body-wrapper {
+      padding: 0 1.25rem;
+    }
+    .post-content {
+      padding: 1.5rem 0 3rem;
+    }
+    .prose-content {
+      font-size: 1rem;
+    }
+  }
+
+  /* ── TOC scope for scroll-driven animations (future) ─ */
+  .toc-scope {
+    /* CSS scroll-timeline will be added here when supported */
   }
 </style>

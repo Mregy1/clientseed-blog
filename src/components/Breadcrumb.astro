@@ -9,18 +9,25 @@ const { postTitle } = Astro.props;
   <ol>
     <li>
       <a href="/" aria-label="Home">
-        <!-- house icon -->
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20"
           fill="currentColor" aria-hidden="true">
-          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
         </svg>
       </a>
     </li>
-    <li aria-hidden="true" class="sep">›</li>
+    <li aria-hidden="true" class="sep">
+      <svg class="sep-icon" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+      </svg>
+    </li>
     <li>
       <a href="/blog">Posts</a>
     </li>
-    <li aria-hidden="true" class="sep">›</li>
+    <li aria-hidden="true" class="sep">
+      <svg class="sep-icon" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+      </svg>
+    </li>
     <li aria-current="page" class="current">{postTitle}</li>
   </ol>
 </nav>
@@ -41,18 +48,23 @@ const { postTitle } = Astro.props;
     gap: 0.25rem;
     font-size: 0.875rem;
     color: rgb(var(--gray));
+    max-width: 768px;
+    margin-inline: auto;
   }
   .breadcrumb a {
     color: rgb(var(--gray));
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 500;
     display: inline-flex;
     align-items: center;
+    transition: color 0.15s;
+    border-radius: 2px;
+    padding: 0.125rem 0.25rem;
   }
   .breadcrumb a:hover {
     color: var(--accent);
   }
-  /* "Posts" link matches cloned site bold red style */
+  /* "Posts" link — bold accent */
   .breadcrumb li:nth-child(3) a {
     color: var(--accent);
     font-weight: 700;
@@ -62,16 +74,23 @@ const { postTitle } = Astro.props;
   }
   .sep {
     color: rgb(var(--gray-light));
-    font-size: 1rem;
     user-select: none;
+    display: flex;
+    align-items: center;
+  }
+  .sep-icon {
+    width: 16px;
+    height: 16px;
   }
   .current {
-    color: rgb(var(--gray-dark));
-    font-weight: 400;
-    /* truncate long titles on small screens */
+    color: rgb(var(--black));
+    font-weight: 500;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 40ch;
+  }
+  .dark .current {
+    color: white;
   }
 </style>

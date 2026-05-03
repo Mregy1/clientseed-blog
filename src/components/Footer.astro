@@ -3,13 +3,40 @@ import config from "../content/config/config.json";
 import IconLink from "./react/IconLink";
 const today = new Date();
 ---
-<div class="tina-footer">
-	<div class="tina-banner-content"><img src="/llama.svg" alt="Tina CMS Llama Logo" /><a href="https://tina.io" target="_blank" rel="noopener noreferrer">Powered by TinaCMS</a>
+
+<footer class="site-footer">
+	<nav aria-label="Footer navigation" class="footer-nav">
+		{
+			config.nav.map((nav) => (
+				<a href={nav.link} class="footer-link">{nav.title}</a>
+			))
+		}
+		<a href="/rss.xml" class="rss-link" title="Subscribe to RSS feed" aria-label="Subscribe to RSS feed" target="_blank" rel="noopener noreferrer">
+			<svg class="rss-icon" viewBox="0 0 16 16" aria-hidden="true">
+				<circle cx="3" cy="13" r="2"/>
+				<path d="M15,15h-2.7C12.3,8.8,7.2,3.7,1,3.7V1C8.7,1,15,7.3,15,15z"/>
+				<path d="M10.3,15H7.7c0-3.7-3-6.7-6.7-6.7V5.7C6.1,5.7,10.3,9.9,10.3,15z"/>
+			</svg>
+			<span class="sr-only">RSS</span>
+		</a>
+	</nav>
+	
+	<div class="footer-personal">
+		<img 
+			src="/avatar.svg" 
+			alt={`Illustration of ${config.seo.siteOwner}`} 
+			width="80" 
+			height="80"
+			class="footer-avatar"
+			onerror="this.style.display='none'"
+		/>
+		<p class="footer-bio">
+			Built with Astro + TinaCMS. Sharing thoughts on web dev, design, and whatever catches my curiosity.
+		</p>
 	</div>
-</div>
-	<footer class="copyright-footer">
-		&copy; {today.getFullYear()}
-		{config.seo.siteOwner}. All rights reserved.
+	
+	<div class="copyright-footer">
+		&copy; {today.getFullYear()} {config.seo.siteOwner}. All rights reserved.
 		<div class="social-links">
 			{
 				config?.contactLinks?.map((link) => {
@@ -19,77 +46,141 @@ const today = new Date();
 				})
 			}
 		</div>
-	</footer>
+	</div>
+</footer>
 
 <style>
-
+	.site-footer {
+		background: rgb(var(--gray-light));
+		padding: 2rem 1rem;
+		position: sticky;
+		bottom: 0;
+		width: 100%;
+		z-index: 10;
+	}
+	.dark .site-footer {
+		background: rgb(var(--gray-dark));
+	}
+	.footer-nav {
+		display: flex;
+		justify-content: center;
+		gap: 1rem;
+		margin-bottom: 1rem;
+		flex-wrap: wrap;
+	}
+	.footer-link {
+		color: rgb(var(--gray-dark));
+		text-decoration: none;
+		font-size: 0.875rem;
+		font-weight: 500;
+		transition: color 0.15s;
+		padding: 0.25rem 0.5rem;
+		border-radius: 4px;
+	}
+	.dark .footer-link {
+		color: rgb(var(--gray-light));
+	}
+	.footer-link:hover {
+		color: var(--accent);
+	}
+	@media (hover: hover) {
+		.footer-link:hover {
+			transform: scale(1.05);
+		}
+	}
+	.rss-link {
+		color: var(--accent);
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		font-size: 0.875rem;
+		font-weight: 500;
+		text-decoration: none;
+		transition: color 0.15s;
+		padding: 0.25rem 0.5rem;
+		border-radius: 4px;
+	}
+	.rss-link:hover {
+		color: var(--accent-dark);
+	}
+	.rss-icon {
+		width: 16px;
+		height: 16px;
+		fill: currentColor;
+	}
+	.footer-personal {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 1rem;
+		margin-bottom: 1rem;
+	}
+	.footer-avatar {
+		width: 80px;
+		height: 80px;
+		border-radius: 50%;
+		background: rgb(var(--gray));
+	}
+	.footer-bio {
+		color: rgb(var(--gray));
+		font-size: 0.875rem;
+		max-width: 300px;
+		margin: 0;
+		text-align: left;
+	}
+	.dark .footer-bio {
+		color: rgb(var(--gray-light));
+	}
 	.copyright-footer {
-		padding: 2em 1em 2em 1em;
-		background: linear-gradient(var(--gray-gradient)) no-repeat;
+		padding: 1rem;
 		color: rgb(var(--gray));
 		text-align: center;
+		font-size: 0.875rem;
 	}
-
+	.dark .copyright-footer {
+		color: rgb(var(--gray-light));
+	}
 	.social-links {
 		display: flex;
 		justify-content: center;
 		gap: 1em;
-		margin-top: 1em;
+		margin-top: 0.5rem;
 	}
-
 	.social-links a {
 		text-decoration: none;
 		color: rgb(var(--gray));
+		transition: color 0.15s;
 	}
-
+	.dark .social-links a {
+		color: rgb(var(--gray-light));
+	}
 	.social-links a:hover {
 		color: rgb(var(--gray-dark));
 	}
-
-	.tina-footer {
-		display: flex;
-		justify-content: center;
-		position: relative;
-		width: 100%;
-		overflow: hidden;
-		background-image: linear-gradient(60deg, #000000 0%,  #EC4815 50%, #000000 100%);
-		padding: 1.5em 0;
-	}
-
-	.tina-banner-content {
-		display: flex;
-		align-items: center;
-		gap: 0.5em;
-		font-size: 1.2em;
-		position: relative;
-		z-index: 2;
-	}
-
-	.tina-footer::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: -50%;
-		width: 200%;
-		height: 100%;
-		background-image: linear-gradient(60deg, #1F1E24 25%,   #EC4815 50%, #1F1E24 75%);
-		transition: transform 1s ease-in-out;
-		z-index: 1;
-	}
-
-	.tina-footer:has(.tina-banner-content a:hover)::before {
-		transform: scaleX(2);
-	}
-
-	.tina-banner-content img {
-		width: 30px;
-		height: auto;
-	}
-
-	.tina-banner-content a {
+	.dark .social-links a:hover {
 		color: white;
-		text-decoration: none;
-		padding-top: 0.5em;
-		font-weight: bold;
+	}
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+	@media (max-width: 768px) {
+		.footer-personal {
+			flex-direction: column;
+			text-align: center;
+		}
+		.footer-bio {
+			text-align: center;
+		}
+		.footer-nav {
+			gap: 0.5rem;
+		}
 	}
 </style>

@@ -1,6 +1,6 @@
 /*
   global.css — extended from Bear Blog default
-  Additions: accessibility focus styles, skip link, pagefind overrides
+  Additions: dark mode support, accessibility focus styles, TOC, zoom feeling
 */
 
 :root {
@@ -17,12 +17,25 @@
     0 16px 32px rgba(var(--gray), 33%);
 }
 
+/* Dark mode overrides */
+.dark {
+  --black: 226, 232, 240;
+  --gray: 148, 163, 184;
+  --gray-light: 51, 65, 85;
+  --gray-dark: 15, 23, 42;
+  --gray-gradient: rgba(30, 41, 59, 50%), rgb(15, 23, 42);
+  --box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.3),
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    0 16px 32px rgba(0, 0, 0, 0.5);
+}
+
 @font-face {
   font-family: 'Atkinson';
   src: url('/fonts/atkinson-regular.woff') format('woff');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;  /* ← prevents render-blocking (PageSpeed) */
+  font-display: swap;
 }
 @font-face {
   font-family: 'Atkinson';
@@ -33,7 +46,7 @@
 }
 
 body {
-  font-family: 'Atkinson', Georgia, 'Times New Roman', serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   margin: 0;
   padding: 0;
   text-align: left;
@@ -42,58 +55,98 @@ body {
   word-wrap: break-word;
   overflow-wrap: break-word;
   color: rgb(var(--gray-dark));
-  font-size: 20px;
-  line-height: 1.8;
+  font-size: 18px;
+  line-height: 1.7;
+  transition: background 0.3s, color 0.3s;
 }
+.dark body {
+  background: rgb(15, 23, 42);
+  color: rgb(226, 232, 240);
+}
+
 main {
   width: 100%;
   max-width: 100%;
   margin: 0;
   padding: 0;
 }
+
 h1, h2, h3, h4, h5, h6 {
   margin: 0 0 0.5rem 0;
   color: rgb(var(--black));
   line-height: 1.2;
 }
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: white;
+}
+
 h1 { font-size: 3.052em; }
 h2 { font-size: 2.441em; }
 h3 { font-size: 1.953em; }
 h4 { font-size: 1.563em; }
 h5 { font-size: 1.25em; }
+
 strong, b { font-weight: 700; }
 a { color: var(--accent); }
 a:hover { color: var(--accent); }
 p { margin-bottom: 1em; }
-.prose p { margin-bottom: 2em; }
+.prose p { margin-bottom: 1.5em; }
+
 textarea { width: 100%; font-size: 16px; }
 input { font-size: 16px; }
 table { width: 100%; }
+
 img {
   max-width: 100%;
   height: auto;
   border-radius: 8px;
 }
+
 code {
-  padding: 2px 5px;
+  padding: 2px 6px;
   background-color: rgb(var(--gray-light));
-  border-radius: 2px;
+  border-radius: 4px;
+  font-size: 0.875em;
 }
-pre { padding: 1.5em; border-radius: 8px; }
-pre > code { all: unset; }
+.dark code {
+  background: rgb(51, 65, 85);
+  color: rgb(226, 232, 240);
+}
+
+pre {
+  padding: 1.5em;
+  border-radius: 8px;
+  background: rgb(var(--gray-dark));
+  overflow-x: auto;
+}
+.dark pre {
+  background: rgb(30, 41, 59);
+}
+pre > code { all: unset; color: rgb(var(--gray-light)); }
+
 blockquote {
   border-left: 4px solid var(--accent);
   padding: 0 0 0 20px;
-  margin: 0;
-  font-size: 1.333em;
+  margin: 2rem 0;
+  font-size: 1.125rem;
+  font-style: italic;
+  color: rgb(var(--gray));
 }
+.dark blockquote {
+  color: rgb(var(--gray-light));
+}
+
 hr {
   border: none;
   border-top: 1px solid rgb(var(--gray-light));
+  margin: 2.5rem 0;
+}
+.dark hr {
+  border-color: rgb(51, 65, 85);
 }
 
 @media (max-width: 720px) {
-  body { font-size: 18px; }
+  body { font-size: 16px; }
   main { padding: 0; }
 }
 
@@ -135,12 +188,19 @@ hr {
 .social-links a {
   text-decoration: none;
   color: rgb(var(--gray));
+  transition: color 0.15s;
+}
+.dark .social-links a {
+  color: rgb(var(--gray-light));
 }
 .social-links a:hover {
   color: rgb(var(--gray-dark));
 }
+.dark .social-links a:hover {
+  color: white;
+}
 
-/* ── H1 inside post body — Montserrat, same size as h2 ── */
+/* ── H1 inside post body — Montserrat ───────────────── */
 [data-post-body] h1 {
   font-family: 'Montserrat', sans-serif;
   font-size: 1.6rem;
@@ -150,15 +210,12 @@ hr {
 }
 
 /* ── TOC Sidebar ── */
-/* Always hidden below 1200px, or when React hasn't found headings yet */
 .toc { display: none; }
 .toc.toc-hidden { display: none !important; }
 
-/* On wide screens: absolute-positioned aside the article column */
 @media (min-width: 1200px) {
   .toc.toc-visible {
     display: block;
-    /* absolute inside .post-article-wrapper so it sits beside the article */
     position: absolute;
     top: 0;
     right: 0;
@@ -167,7 +224,6 @@ hr {
     padding-top: 2.5rem;
   }
 
-  /* Sticky inner div scrolls with the page but stays in view */
   .toc-inner {
     position: sticky;
     top: 6rem;
@@ -218,4 +274,20 @@ hr {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
+}
+
+/* ── Dark mode transition ────────────────────────────── */
+.dark body,
+.dark header,
+.dark main,
+.dark footer,
+.dark .post-article,
+.dark .prose-content,
+.dark .card-title,
+.dark .card-description,
+.dark .toc-list a,
+.dark .breadcrumb a,
+.dark .post-meta-bar,
+.dark .reading-time-badge {
+  transition: background 0.3s, color 0.3s;
 }
