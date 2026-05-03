@@ -258,11 +258,24 @@ hr {
   border-left: 2px solid transparent;
   transition: color 0.15s, border-color 0.15s;
 }
-.toc-list a:hover { color: rgb(var(--gray-dark)); }
+.toc-list a:hover { 
+  color: rgb(var(--gray-dark)); 
+}
+.dark .toc-list a:hover {
+  color: rgb(var(--gray-light));
+}
+/* Active state: highlighted with accent color */
 .toc-list a.active {
   color: var(--accent);
   border-left-color: var(--accent);
   font-weight: 600;
+}
+/* Inactive items: grayed out */
+.toc-list a:not(.active) {
+  color: rgb(var(--gray));
+}
+.dark .toc-list a:not(.active) {
+  color: rgb(148, 163, 184);
 }
 .toc-sub a {
   padding-left: 1.5rem;
