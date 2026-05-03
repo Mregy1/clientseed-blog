@@ -111,8 +111,7 @@ const related = allPosts
     z-index: 9999;
     transition: width 0.05s linear;
     border-radius: 0 2px 2px 0;
-    /* subtle glow so it pops on both light/dark backgrounds */
-    box-shadow: 0 0 6px rgba(35, 55, 255, 0.5);
+    box-shadow: 0 0 6px rgba(35, 55, 255, 0.4);
   }
 
   /* ── Skip link ──────────────────────────────────────── */
@@ -132,27 +131,28 @@ const related = allPosts
   }
   :global(.skip-link:focus) { top: 0; }
 
-  /* ── Wrapper: relative container for TOC sidebar positioning */
+  /* ── Outer wrapper — wide enough to hold article + TOC side by side */
   .post-article-wrapper {
     position: relative;
-    max-width: 1080px;
+    /* 768px article + 2×240px TOC gutters = 1248px total */
+    max-width: 1248px;
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 2rem;
   }
 
-  /* ── Article column — centered, 680px ──────────────── */
+  /* ── Article column — matches cloned site max-w-3xl (768px) ── */
   .post-article {
-    max-width: 680px;
+    max-width: 768px;
     margin-inline: auto;
-    padding: 2rem 0 4rem;
+    padding: 2.5rem 0 5rem;
   }
 
-  /* ── Hero image — full viewport width, no radius ───── */
+  /* ── Hero image — full viewport width ───────────────── */
   .post-article :global(.hero-image) {
     width: 100vw;
     margin-left: calc(-50vw + 50%);
     margin-right: calc(-50vw + 50%);
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
   }
   .post-article :global(.hero-image img) {
     display: block;
@@ -162,8 +162,6 @@ const related = allPosts
     border-radius: 0;
   }
 
-  /* ── TOC sidebar positioning handled by global.css ── */
-
   /* ── Date + reading time row ── */
   :global(.post-meta-bar) {
     display: flex;
@@ -171,7 +169,8 @@ const related = allPosts
     gap: 1rem;
     font-size: 0.875rem;
     color: rgb(var(--gray));
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-family: 'Montserrat', sans-serif;
   }
   :global(.updated-notice) {
     font-size: 0.875rem;
@@ -180,44 +179,72 @@ const related = allPosts
     margin: 0.25rem 0 0;
   }
 
-  /* ── Title block ─────────────────────────────────────── */
+  /* ── Post title — Montserrat black, tight tracking ───── */
   .post-article :global(.prose .title) {
     text-align: left;
     padding: 0;
     margin-bottom: 2rem;
   }
   .post-article :global(.prose .title h1) {
-    font-size: 2.2rem;
-    line-height: 1.2;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 2.6rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
     margin: 0.25rem 0 0.5rem;
+    color: rgb(var(--black));
   }
 
-  /* ── Body prose ─────────────────────────────────────── */
+  /* ── Body prose — Lora serif, generous size ─────────── */
   .post-article :global(.prose) {
     width: 100%;
     max-width: 100%;
     margin: 0;
     padding: 0;
-    font-size: 1.125rem;
-    line-height: 1.8;
+    /* Lora = the serif font from Google Fonts we loaded */
+    font-family: 'Lora', Georgia, serif;
+    font-size: 1.2rem;        /* ~19px — "zoomed in" reading feel */
+    line-height: 1.85;
     color: rgb(var(--gray-dark));
-    font-family: Georgia, 'Times New Roman', serif;
   }
-  .post-article :global(.prose p)  { margin-bottom: 1.6em; }
-  .post-article :global(.prose h2) { font-size: 1.6rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
-  .post-article :global(.prose h3) { font-size: 1.3rem; margin-top: 2rem;   margin-bottom: 0.5rem;  }
+  .post-article :global(.prose p) {
+    margin-bottom: 1.75em;
+  }
+
+  /* ── In-body headings — Montserrat, left-aligned ────── */
+  .post-article :global(.prose h2),
+  .post-article :global([data-post-body] h2) {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1.6rem;
+    letter-spacing: -0.01em;
+    margin-top: 3rem;
+    margin-bottom: 0.75rem;
+    color: rgb(var(--black));
+  }
+  .post-article :global(.prose h3),
+  .post-article :global([data-post-body] h3) {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-top: 2.25rem;
+    margin-bottom: 0.5rem;
+    color: rgb(var(--black));
+  }
 
   /* ── Body images ─────────────────────────────────────── */
   .post-article :global([data-post-body] img) {
     cursor: zoom-in;
     border-radius: 8px;
-    transition: filter 0.2s ease;
+    transition: transform 0.2s ease;
     max-width: 100%;
     height: auto;
     display: block;
-    margin: 2rem 0;
+    margin: 2.5rem 0;
   }
-  .post-article :global([data-post-body] img:hover) { filter: brightness(0.87); }
+  .post-article :global([data-post-body] img:hover) {
+    transform: scale(1.02);
+  }
 
   /* ── medium-zoom overlay ──────────────────────────────── */
   :global(.medium-zoom-overlay)       { z-index: 1000; }
@@ -232,13 +259,16 @@ const related = allPosts
   }
 
   @media (max-width: 720px) {
+    .post-article-wrapper { padding: 0 1.25rem; }
     .post-article { padding: 1.5rem 0 3rem; }
     .post-article :global(.hero-image) {
       width: 100vw;
       margin-left: calc(-50vw + 50%);
       margin-right: calc(-50vw + 50%);
     }
-    .post-article :global(.prose .title h1) { font-size: 1.8rem; }
-    .post-article :global(.prose) { font-size: 1rem; }
+    .post-article :global(.prose .title h1) {
+      font-size: 2rem;
+    }
+    .post-article :global(.prose) { font-size: 1.05rem; }
   }
 </style>

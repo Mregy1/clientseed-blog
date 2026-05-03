@@ -140,25 +140,48 @@ hr {
   color: rgb(var(--gray-dark));
 }
 
-/* ── H1 inside post body — same size as h2 ────────────── */
+/* ── H1 inside post body — Montserrat, same size as h2 ── */
 [data-post-body] h1 {
+  font-family: 'Montserrat', sans-serif;
   font-size: 1.6rem;
-  font-weight: 600;
+  font-weight: 700;
   margin-top: 2.5rem;
   margin-bottom: 0.75rem;
 }
 
 /* ── TOC Sidebar ── */
-/* Hidden by default (React sets .toc-visible when headings are found) */
+/* Always hidden below 1200px, or when React hasn't found headings yet */
+.toc { display: none; }
 .toc.toc-hidden { display: none !important; }
 
+/* On wide screens: absolute-positioned aside the article column */
+@media (min-width: 1200px) {
+  .toc.toc-visible {
+    display: block;
+    /* absolute inside .post-article-wrapper so it sits beside the article */
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 220px;
+    height: 100%;
+    padding-top: 2.5rem;
+  }
+
+  /* Sticky inner div scrolls with the page but stays in view */
+  .toc-inner {
+    position: sticky;
+    top: 6rem;
+  }
+}
+
 .toc-heading {
+  font-family: 'Montserrat', sans-serif;
   font-weight: 700;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   color: rgb(var(--gray));
-  margin: 0 0 1rem;
+  margin: 0 0 0.75rem;
 }
 .toc-list {
   list-style: none;
@@ -166,33 +189,28 @@ hr {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0;
 }
 .toc-list a {
-  color: rgb(var(--gray-dark));
-  text-decoration: none;
   display: block;
-  padding: 2px 0;
-  transition: color 0.15s;
-  font-size: 0.85rem;
+  padding: 0.25rem 0 0.25rem 0.75rem;
+  color: rgb(var(--gray));
+  text-decoration: none;
+  font-size: 0.8125rem;
   line-height: 1.4;
+  font-weight: 400;
+  border-left: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
 }
-.toc-list a:hover,
+.toc-list a:hover { color: rgb(var(--gray-dark)); }
 .toc-list a.active {
   color: var(--accent);
+  border-left-color: var(--accent);
+  font-weight: 600;
 }
-
-/* On >1200px: fixed sidebar to the right of the content column */
-@media (min-width: 1200px) {
-  .toc.toc-visible {
-    display: block;
-    position: fixed;
-    top: 120px;
-    right: 2rem;
-    width: 200px;
-    border-left: 2px solid rgb(var(--gray-light));
-    padding-left: 1rem;
-  }
+.toc-sub a {
+  padding-left: 1.5rem;
+  font-size: 0.8rem;
 }
 
 /* ── Reading time badge icon ── */

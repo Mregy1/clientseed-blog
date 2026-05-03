@@ -124,14 +124,17 @@ export default function TableOfContents() {
       id="toc"
       aria-label="Table of contents"
     >
-      <p className="toc-heading">Contents</p>
-      <ul className="toc-list">
-        {headings.map((h) => (
-          <li key={h.id} className={h.level === 'H3' ? 'toc-sub' : ''}>
-            <a href={`#${h.id}`}>{h.text}</a>
-          </li>
-        ))}
-      </ul>
+      {/* .toc-inner is sticky so it scrolls with the page but stays visible */}
+      <div className="toc-inner">
+        <p className="toc-heading">Contents</p>
+        <ul className="toc-list">
+          {headings.map((h) => (
+            <li key={h.id} className={h.level === 'H3' ? 'toc-sub' : ''}>
+              <a href={`#${h.id}`}>{h.text}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </nav>
   );
 }
