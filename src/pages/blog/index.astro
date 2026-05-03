@@ -10,103 +10,288 @@ const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 
+const postCount = posts.length;
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={config.seo.title} description={config.seo.description} />
-		<style>
-			main {
-				width: 960px;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
-			}
-		</style>
+		<BaseHead title={`Posts | ${config.seo.title}`} description="Articles that I really wanted to share or felt compelled to write because I didn't find it when I was looking" />
 	</head>
 	<body>
 		<Header />
-		<main>
-			<section>
-				<ul>
+		<main class="posts-page">
+			<!-- Header Section -->
+			<section class="posts-header">
+				<div class="posts-header-inner">
+					<p class="post-count">[ {postCount} posts ]</p>
+					<h1 class="page-title">Posts, aka Blog Posts</h1>
+					<p class="page-description">
+						Articles that I really wanted to share or felt compelled to write because I didn't find it when I was looking. They've survived refactors and redesigns.
+					</p>
+				</div>
+			</section>
+
+			<!-- Posts Grid -->
+			<section class="posts-grid-section">
+				<div class="posts-grid">
 					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									<img width={720} height={360} src={post.data.heroImage} alt="" />
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
+						posts.map((post, index) => (
+							<article class={`post-card group ${index === 0 ? 'featured' : ''}`}>
+								<a href={`/blog/${post.id}/`} class="card-link">
+									<span class="sr-only">Read {post.data.title}</span>
+								</a>
+								
+								<!-- Background Image -->
+								<img 
+									class="card-image" 
+									src={post.data.heroImage} 
+									alt="" 
+									loading="lazy" 
+									decoding="async"
+								/>
+								
+								<!-- Gradient Overlay -->
+								<div class="card-overlay"></div>
+								
+								<!-- Content -->
+								<div class="card-content">
+									<h3 class="card-title">{post.data.title}</h3>
+									<p class="card-description">{post.data.description}</p>
+									<p class="card-date">
 										<FormattedDate date={post.data.pubDate} />
 									</p>
-								</a>
-							</li>
+								</div>
+							</article>
 						))
 					}
-				</ul>
+				</div>
 			</section>
 		</main>
 		<Footer />
 	</body>
 </html>
+
+<style>
+	/* ── Posts Page Layout ─────────────────────────────── */
+	.posts-page {
+		max-width: 100%;
+		margin: 0;
+		padding: 0;
+	}
+
+	/* ── Header Section ────────────────────────────────── */
+	.posts-header {
+		padding: 3rem 2rem 2rem;
+		max-width: 768px;
+		margin: 0 auto;
+	}
+	.posts-header-inner {
+		text-align: left;
+	}
+	.post-count {
+		font-family: 'Montserrat', sans-serif;
+		font-weight: 700;
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: rgb(var(--gray));
+		margin: 0 0 0.5rem;
+	}
+	.page-title {
+		font-family: 'Montserrat', sans-serif;
+		font-weight: 900;
+		font-size: 2.6rem;
+		line-height: 1.1;
+		letter-spacing: -0.02em;
+		color: rgb(var(--black));
+		margin: 0 0 1rem;
+	}
+	.page-description {
+		font-family: 'Lora', Georgia, serif;
+		font-size: 1.1rem;
+		line-height: 1.7;
+		color: rgb(var(--gray));
+		margin: 0;
+	}
+
+	/* ── Posts Grid ────────────────────────────────────── */
+	.posts-grid-section {
+		padding: 2rem;
+		max-width: 1800px;
+		margin: 0 auto;
+	}
+	.posts-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 0;
+		border-top: 1px solid rgb(var(--gray-light));
+		border-bottom: 1px solid rgb(var(--gray-light));
+	}
+
+	/* ── Card Component ────────────────────────────────── */
+	.post-card {
+		position: relative;
+		isolation: isolate;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		overflow: hidden;
+		background: rgb(var(--gray-dark));
+		min-height: 320px;
+		padding: 1.5rem;
+		border-bottom: 1px solid rgb(var(--gray-light));
+		transition: box-shadow 0.3s ease;
+	}
+	.post-card:last-child {
+		border-bottom: none;
+	}
+	.post-card.featured {
+		grid-column: 1 / -1;
+		min-height: 400px;
+	}
+
+	/* Card link overlay (invisible full-card click target) */
+	.card-link {
+		position: absolute;
+		inset: 0;
+		z-index: 20;
+	}
+
+	/* Background image */
+	.card-image {
+		position: absolute;
+		inset: 0;
+		z-index: -10;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.3s ease;
+	}
+
+	/* Gradient overlay */
+	.card-overlay {
+		position: absolute;
+		inset: 0;
+		z-index: -5;
+		background: linear-gradient(
+			to top,
+			rgba(var(--gray-dark), 0.95) 0%,
+			rgba(var(--gray-dark), 0.6) 50%,
+			rgba(var(--gray-dark), 0.2) 100%
+		);
+		transition: opacity 0.3s ease;
+	}
+
+	/* Content */
+	.card-content {
+		position: relative;
+		z-index: 10;
+		transform: translateY(0);
+		transition: transform 0.3s ease;
+	}
+	.card-title {
+		font-family: 'Montserrat', sans-serif;
+		font-weight: 700;
+		font-size: 1.25rem;
+		line-height: 1.3;
+		color: white;
+		margin: 0 0 0.5rem;
+		transition: transform 0.3s ease;
+	}
+	.card-description {
+		font-family: 'Lora', Georgia, serif;
+		font-size: 0.875rem;
+		line-height: 1.5;
+		color: rgba(255, 255, 255, 0.8);
+		margin: 0 0 0.5rem;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		transition: transform 0.3s ease;
+	}
+	.card-date {
+		font-family: 'Montserrat', sans-serif;
+		font-weight: 400;
+		font-size: 0.75rem;
+		color: rgba(255, 255, 255, 0.6);
+		margin: 0;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+	}
+
+	/* ── Hover Effects ────────────────────────────────── */
+	@media (hover: hover) {
+		.post-card:hover {
+			box-shadow: 0 4px 20px rgba(var(--gray), 0.3);
+		}
+		.post-card:hover .card-image {
+			transform: scale(1.05);
+		}
+		.post-card:hover .card-content {
+			transform: translateY(-2px);
+		}
+		.post-card:hover .card-overlay {
+			opacity: 0.9;
+		}
+	}
+
+	/* ── Responsive ────────────────────────────────────── */
+	@media (min-width: 640px) {
+		.posts-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+		.post-card {
+			border-bottom: none;
+			border-right: 1px solid rgb(var(--gray-light));
+		}
+		.post-card:nth-child(2n) {
+			border-right: none;
+		}
+		.post-card.featured {
+			grid-column: 1 / -1;
+			border-right: none;
+			border-bottom: 1px solid rgb(var(--gray-light));
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.posts-grid {
+			grid-template-columns: repeat(3, 1fr);
+		}
+		.post-card {
+			border-right: 1px solid rgb(var(--gray-light));
+		}
+		.post-card:nth-child(2n) {
+			border-right: 1px solid rgb(var(--gray-light));
+		}
+		.post-card:nth-child(3n) {
+			border-right: none;
+		}
+		.post-card.featured {
+			grid-column: 1 / -1;
+			border-right: none;
+			border-bottom: 1px solid rgb(var(--gray-light));
+		}
+		.posts-header {
+			padding: 4rem 2rem 2rem;
+		}
+		.page-title {
+			font-size: 3rem;
+		}
+	}
+
+	/* Skip link support */
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+</style>
