@@ -25,8 +25,8 @@ const today = new Date();
 		<img 
 			src="/avatar.svg" 
 			alt={`Illustration of ${config.seo.siteOwner}`} 
-			width="80" 
-			height="80"
+			width="150" 
+			height="150"
 			class="footer-avatar"
 			onerror="this.style.display='none'"
 		/>
@@ -34,29 +34,18 @@ const today = new Date();
 			Built with Astro + TinaCMS. Sharing thoughts on web dev, design, and whatever catches my curiosity.
 		</p>
 	</div>
-	
-	<div class="copyright-footer">
-		&copy; {today.getFullYear()} {config.seo.siteOwner}. All rights reserved.
-		<div class="social-links">
-			{
-				config?.contactLinks?.map((link) => {
-					return (
-						<IconLink {...link} />
-					);
-				})
-			}
-		</div>
-	</div>
 </footer>
 
 <style>
 	.site-footer {
 		background: rgb(var(--gray-light));
-		padding: 2rem 1rem;
+		padding: 1rem 1rem 0;
 		position: sticky;
 		bottom: 0;
 		width: 100%;
 		z-index: 10;
+		display: grid;
+		place-items: center;
 	}
 	.dark .site-footer {
 		background: rgb(var(--gray-dark));
@@ -111,54 +100,26 @@ const today = new Date();
 	.footer-personal {
 		display: flex;
 		align-items: center;
-		justify-content: center;
 		gap: 1rem;
-		margin-bottom: 1rem;
+		padding-bottom: 1rem;
 	}
 	.footer-avatar {
 		width: 80px;
 		height: 80px;
 		border-radius: 50%;
 		background: rgb(var(--gray));
+		flex-shrink: 0;
 	}
 	.footer-bio {
 		color: rgb(var(--gray));
 		font-size: 0.875rem;
-		max-width: 300px;
+		max-width: 280px;
 		margin: 0;
 		text-align: left;
+		line-height: 1.5;
 	}
 	.dark .footer-bio {
 		color: rgb(var(--gray-light));
-	}
-	.copyright-footer {
-		padding: 1rem;
-		color: rgb(var(--gray));
-		text-align: center;
-		font-size: 0.875rem;
-	}
-	.dark .copyright-footer {
-		color: rgb(var(--gray-light));
-	}
-	.social-links {
-		display: flex;
-		justify-content: center;
-		gap: 1em;
-		margin-top: 0.5rem;
-	}
-	.social-links a {
-		text-decoration: none;
-		color: rgb(var(--gray));
-		transition: color 0.15s;
-	}
-	.dark .social-links a {
-		color: rgb(var(--gray-light));
-	}
-	.social-links a:hover {
-		color: rgb(var(--gray-dark));
-	}
-	.dark .social-links a:hover {
-		color: white;
 	}
 	.sr-only {
 		position: absolute;
@@ -171,16 +132,21 @@ const today = new Date();
 		white-space: nowrap;
 		border: 0;
 	}
-	@media (max-width: 768px) {
-		.footer-personal {
-			flex-direction: column;
-			text-align: center;
-		}
-		.footer-bio {
-			text-align: center;
+	
+	/* Desktop: side-by-side layout like dandenney.com */
+	@media (min-width: 768px) {
+		.site-footer {
+			align-items: center;
+			display: flex;
+			justify-content: center;
+			gap: 2rem;
+			padding: 1rem;
 		}
 		.footer-nav {
-			gap: 0.5rem;
+			margin-bottom: 0;
+		}
+		.footer-personal {
+			padding-bottom: 0;
 		}
 	}
 </style>
