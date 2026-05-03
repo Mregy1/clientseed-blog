@@ -70,11 +70,11 @@ const related = allPosts
           </div>
         </header>
 
-        <!-- ARTICLE BODY -->
-        <div class="post-body-outer">
-          <div class="post-body-wrapper">
-            <!-- Main Content (centered) -->
-            <div class="post-content">
+        <!-- ARTICLE BODY — dandenney layout: centered content + side TOC -->
+        <div class="article-body">
+          
+          <!-- Main Content — centered, max-w-3xl -->
+          <div class="article-content">
             <!-- Reading time + metadata -->
             <div class="reading-time-bar">
               <span class="reading-time-badge">
@@ -95,12 +95,12 @@ const related = allPosts
             <Breadcrumb postTitle={title} />
           </div>
 
-          <!-- TOC Sidebar — positioned to the side, outside centered content -->
+          <!-- TOC Sidebar — positioned absolute to the right -->
           <div class="toc-sidebar" id="toc-sidebar">
             <TableOfContents client:load />
           </div>
+          
         </div>
-      </div>
 
         <!-- Related Posts -->
         {related.length > 0 && <RelatedPosts posts={related} />}
@@ -177,8 +177,8 @@ const related = allPosts
     z-index: 10;
   }
   .dark .main-content {
-    background: rgb(15, 23, 42); /* slate-900 */
-    color: rgb(226, 232, 240); /* slate-200 */
+    background: rgb(15, 23, 42);
+    color: rgb(226, 232, 240);
   }
 
   /* ── Reading progress bar ───────────────────────────── */
@@ -192,7 +192,7 @@ const related = allPosts
     z-index: 9999;
     transition: width 0.05s linear;
     border-radius: 0 2px 2px 0;
-    box-shadow: 0 0 6px rgba(35, 55, 255, 0.4);
+    box-shadow: 0 0 6px rgba(185, 28, 28, 0.4);
   }
 
   /* ── Skip link ──────────────────────────────────────── */
@@ -289,28 +289,23 @@ const related = allPosts
     opacity: 0.8;
   }
 
-  /* ── Body Layout ───────────────────────────────────── */
-  .post-body-outer {
+  /* ── Article Body — dandenney layout ───────────────── */
+  .article-body {
     position: relative;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 2rem;
   }
-  .post-body-wrapper {
-    position: relative;
-    display: flex;
-    justify-content: flex-start;
-    gap: 0;
-    padding-right: 260px; /* space for TOC sidebar */
-  }
-  .post-content {
+  
+  /* Main content — centered, max-w-3xl like dandenney */
+  .article-content {
     width: 100%;
     max-width: 768px;
     margin: 0 auto;
-    padding: 2.5rem 0 5rem;
+    padding: 2.5rem 1rem 5rem;
   }
 
-  /* ── TOC Sidebar ───────────────────────────────────── */
+  /* ── TOC Sidebar — absolute positioned to the right ──── */
   .toc-sidebar {
     display: none;
   }
@@ -350,32 +345,37 @@ const related = allPosts
     height: 16px;
   }
 
-  /* ── Prose Content (System Sans — dandenney style) ─── */
+  /* ── Prose Content — dandenney exact style ──────────── */
   .prose-content {
     width: 100%;
     max-width: 100%;
     margin: 0;
     padding: 0;
-    /* System sans for that dandenney zoom-in feel */
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    font-size: 1rem;
-    line-height: 1.7;
+    /* Tailwind-like system sans stack */
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    font-size: 1.125rem;
+    line-height: 1.75;
     color: rgb(var(--gray-dark));
+    /* Subtle zoomed-in feel with letter spacing */
+    letter-spacing: -0.01em;
   }
   .dark .prose-content {
     color: rgb(226, 232, 240);
   }
   .prose-content :global(p) {
-    margin-bottom: 1.5em;
+    margin-bottom: 1.75em;
+    /* Tighter paragraphs for that dandenney feel */
+    line-height: 1.75;
   }
   .prose-content :global(h2) {
     font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
-    font-size: 1.6rem;
-    letter-spacing: -0.01em;
-    margin-top: 3rem;
-    margin-bottom: 0.75rem;
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: -0.025em;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
     color: rgb(var(--black));
+    line-height: 1.2;
   }
   .dark .prose-content :global(h2) {
     color: white;
@@ -384,9 +384,11 @@ const related = allPosts
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     font-size: 1.25rem;
-    margin-top: 2.25rem;
-    margin-bottom: 0.5rem;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
     color: rgb(var(--black));
+    line-height: 1.3;
+    letter-spacing: -0.02em;
   }
   .dark .prose-content :global(h3) {
     color: white;
@@ -408,6 +410,7 @@ const related = allPosts
     font-size: 1.125rem;
     font-style: italic;
     color: rgb(var(--gray));
+    line-height: 1.6;
   }
   .dark .prose-content :global(blockquote) {
     color: rgb(var(--gray-light));
@@ -417,6 +420,8 @@ const related = allPosts
     border-radius: 8px;
     background: rgb(var(--gray-dark));
     overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.7;
   }
   .dark .prose-content :global(pre) {
     background: rgb(30, 41, 59);
@@ -426,6 +431,7 @@ const related = allPosts
     background: rgb(var(--gray-light));
     border-radius: 4px;
     font-size: 0.875em;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   }
   .dark .prose-content :global(code) {
     background: rgb(51, 65, 85);
@@ -435,14 +441,16 @@ const related = allPosts
     background: none;
     padding: 0;
     color: rgb(var(--gray-light));
+    font-size: inherit;
   }
   .prose-content :global(ul),
   .prose-content :global(ol) {
-    margin-bottom: 1.5em;
+    margin-bottom: 1.75em;
     padding-left: 1.5em;
   }
   .prose-content :global(li) {
     margin-bottom: 0.5em;
+    line-height: 1.75;
   }
   .prose-content :global(img) {
     max-width: 100%;
@@ -517,14 +525,21 @@ const related = allPosts
     .post-title {
       font-size: 1.8rem;
     }
-    .post-body-outer {
-      padding: 0 1.25rem;
+    .article-body {
+      padding: 0 1rem;
     }
-    .post-content {
-      padding: 1.5rem 0 3rem;
+    .article-content {
+      padding: 1.5rem 0.5rem 3rem;
     }
     .prose-content {
       font-size: 1rem;
+      line-height: 1.7;
+    }
+    .prose-content :global(h2) {
+      font-size: 1.35rem;
+    }
+    .prose-content :global(h3) {
+      font-size: 1.15rem;
     }
   }
 
