@@ -35,7 +35,7 @@ const related = allPosts
     />
   </head>
 
-  <body>
+  <body class="post-page">
     <div id="reading-progress" aria-hidden="true"></div>
     <a href="#main-content" class="skip-link">Skip to main content</a>
     <Header />
@@ -157,6 +157,16 @@ const related = allPosts
 </html>
 
 <style>
+  /* ── Post Page Layout ──────────────────────────────── */
+  .post-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  .post-page .main-content {
+    flex: 1 0 auto;
+  }
+
   /* ── Main Content Area ─────────────────────────────── */
   .main-content {
     background: white;
@@ -269,7 +279,7 @@ const related = allPosts
   /* ── Body Layout ───────────────────────────────────── */
   .post-body-wrapper {
     position: relative;
-    max-width: 1248px;
+    max-width: 768px;
     margin: 0 auto;
     padding: 0 2rem;
     display: flex;
@@ -277,6 +287,7 @@ const related = allPosts
   }
   .post-content {
     flex: 1;
+    width: 100%;
     max-width: 768px;
     margin: 0 auto;
     padding: 2.5rem 0 5rem;

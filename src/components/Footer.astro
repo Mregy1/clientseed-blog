@@ -39,13 +39,12 @@ const today = new Date();
 <style>
 	.site-footer {
 		background: rgb(var(--gray-light));
-		padding: 1rem 1rem 0;
-		position: sticky;
-		bottom: 0;
+		padding: 1rem;
 		width: 100%;
 		z-index: 10;
 		display: grid;
 		place-items: center;
+		/* NOT sticky - regular footer at bottom */
 	}
 	.dark .site-footer {
 		background: rgb(var(--gray-dark));
@@ -101,7 +100,6 @@ const today = new Date();
 		display: flex;
 		align-items: center;
 		gap: 1rem;
-		padding-bottom: 1rem;
 	}
 	.footer-avatar {
 		width: 80px;
@@ -144,9 +142,6 @@ const today = new Date();
 		}
 		.footer-nav {
 			margin-bottom: 0;
-		}
-		.footer-personal {
-			padding-bottom: 0;
 		}
 	}
 </style>
