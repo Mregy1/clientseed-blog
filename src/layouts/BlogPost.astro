@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import RelatedPosts from '../components/RelatedPosts.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
+import TableOfContents from '../components/react/TableOfContents';
 import { getCollection } from 'astro:content';
 
 const { data } = Astro.props;
@@ -70,8 +71,10 @@ const related = allPosts
 
         <!-- ARTICLE BODY -->
         <div class="post-body-wrapper">
-          <!-- TOC Sidebar -->
-          <div class="toc-sidebar" id="toc-sidebar"></div>
+          <!-- TOC Sidebar — TableOfContents React component mounts here -->
+          <div class="toc-sidebar" id="toc-sidebar">
+            <TableOfContents client:load />
+          </div>
 
           <!-- Main Content -->
           <div class="post-content">
