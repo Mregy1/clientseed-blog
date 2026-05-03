@@ -1,0 +1,77 @@
+---
+interface Props {
+  postTitle: string;
+}
+const { postTitle } = Astro.props;
+---
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol>
+    <li>
+      <a href="/" aria-label="Home">
+        <!-- house icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+          fill="currentColor" aria-hidden="true">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+      </a>
+    </li>
+    <li aria-hidden="true" class="sep">›</li>
+    <li>
+      <a href="/blog">Posts</a>
+    </li>
+    <li aria-hidden="true" class="sep">›</li>
+    <li aria-current="page" class="current">{postTitle}</li>
+  </ol>
+</nav>
+
+<style>
+  .breadcrumb {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgb(var(--gray-light));
+  }
+  .breadcrumb ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    color: rgb(var(--gray));
+  }
+  .breadcrumb a {
+    color: rgb(var(--gray));
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+  }
+  .breadcrumb a:hover {
+    color: var(--accent);
+  }
+  /* "Posts" link matches cloned site bold red style */
+  .breadcrumb li:nth-child(3) a {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .breadcrumb li:nth-child(3) a:hover {
+    text-decoration: underline;
+  }
+  .sep {
+    color: rgb(var(--gray-light));
+    font-size: 1rem;
+    user-select: none;
+  }
+  .current {
+    color: rgb(var(--gray-dark));
+    font-weight: 400;
+    /* truncate long titles on small screens */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 40ch;
+  }
+</style>
