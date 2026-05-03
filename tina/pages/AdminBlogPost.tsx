@@ -33,7 +33,7 @@ export default function AdminBlogPost(props: Props) {
   const readingTime = Math.max(1, Math.round(wordCount / 200));
 
   return (
-    <article>
+    <>
       {/* Hero image — full viewport width */}
       <div data-tina-field={tinaField(blog, "heroImage")} className="hero-image">
         {blog.heroImage && (
@@ -90,9 +90,6 @@ export default function AdminBlogPost(props: Props) {
           )}
 
           <hr />
-
-          {/* Table of Contents — after hr, inside title block */}
-          <TableOfContents />
         </div>
 
         {/* Body */}
@@ -100,6 +97,9 @@ export default function AdminBlogPost(props: Props) {
           <TinaMarkdown content={blog.body} />
         </div>
       </div>
-    </article>
+
+      {/* TOC sidebar — sibling of .prose, positioned by CSS outside the content column */}
+      <TableOfContents />
+    </>
   );
 }

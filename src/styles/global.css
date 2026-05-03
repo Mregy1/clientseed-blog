@@ -142,17 +142,17 @@ hr {
 
 
 
-/* ── TOC Sidebar (sticky right of content on >1200px) ── */
-.toc {
-  display: none;
-}
+/* ── TOC Sidebar ── */
+/* Hidden by default (React sets .toc-visible when headings are found) */
+.toc.toc-hidden { display: none !important; }
+
 .toc-heading {
   font-weight: 700;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: rgb(var(--gray));
-  margin-bottom: 1rem;
+  margin: 0 0 1rem;
 }
 .toc-list {
   list-style: none;
@@ -168,18 +168,22 @@ hr {
   display: block;
   padding: 2px 0;
   transition: color 0.15s;
+  font-size: 0.85rem;
+  line-height: 1.4;
 }
 .toc-list a:hover,
 .toc-list a.active {
   color: var(--accent);
 }
 
+/* On >1200px: sidebar positioned absolutely right of content column */
 @media (min-width: 1200px) {
-  .toc {
+  .toc.toc-visible {
     display: block;
     position: sticky;
     top: 6rem;
-    width: 13rem;
+    border-left: 2px solid rgb(var(--gray-light));
+    padding-left: 1rem;
   }
 }
 

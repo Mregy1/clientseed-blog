@@ -17,11 +17,13 @@ export default function TableOfContents() {
 
       const headings = Array.from(post.querySelectorAll('h2, h3')) as HTMLElement[];
       if (headings.length < 2) {
-        nav.style.display = 'none';
+        nav.setAttribute('data-toc-empty', 'true');
+        nav.classList.add('toc-hidden');
         return;
       }
 
-      nav.style.display = '';
+      nav.removeAttribute('data-toc-empty');
+      nav.classList.remove('toc-hidden');
 
       headings.forEach((heading, i) => {
         if (!heading.id) {
@@ -79,10 +81,9 @@ export default function TableOfContents() {
   return (
     <nav
       ref={navRef}
-      className="toc"
+      className="toc toc-hidden"
       id="toc"
       aria-label="Table of contents"
-      style={{ display: 'none' }}
     >
       <p className="toc-heading">Contents</p>
       <ul className="toc-list"></ul>

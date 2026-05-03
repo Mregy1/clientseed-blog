@@ -38,14 +38,17 @@ const related = allPosts
     <Header />
 
     <main id="main-content">
-      <article class="post-article" aria-label={title}>
+      <!-- .post-article-wrapper is the relative container for sidebar TOC positioning -->
+      <div class="post-article-wrapper">
+        <article class="post-article" aria-label={title}>
 
-        <!-- AdminBlogPost renders: hero, date+readingTime, h1, hr, TOC, body -->
-        <slot />
+          <!-- AdminBlogPost renders: hero, date+readingTime, h1, hr, body, TOC -->
+          <slot />
 
-      </article>
+        </article>
 
-      {related.length > 0 && <RelatedPosts posts={related} />}
+        {related.length > 0 && <RelatedPosts posts={related} />}
+      </div>
     </main>
 
     <Footer />
@@ -92,19 +95,22 @@ const related = allPosts
   }
   :global(.skip-link:focus) { top: 0; }
 
-  /* ── Content container (relative, houses TOC sidebar + article) ── */
-  main {
+  /* ── Wrapper: relative container for TOC sidebar positioning */
+  .post-article-wrapper {
     position: relative;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
   }
 
-  /* ── Article column — centered, 680px ───────────────── */
+  /* ── Article column — centered, 680px ──────────────── */
   .post-article {
     max-width: 680px;
     margin-inline: auto;
-    padding: 2rem 1.5rem 4rem;
+    padding: 2rem 0 4rem;
   }
 
-  /* ── Hero image — full viewport width, no radius ────── */
+  /* ── Hero image — full viewport width, no radius ───── */
   .post-article :global(.hero-image) {
     width: 100vw;
     margin-left: calc(-50vw + 50%);
@@ -119,7 +125,8 @@ const related = allPosts
     border-radius: 0;
   }
 
-  /* ── TOC sidebar — sticky right of content, >1200px ─── */
+  /* ── TOC sidebar — absolutely positioned right of content */
+  /* On >1200px: sticky sidebar to the right of the article */
   .post-article :global(.toc) {
     display: none;
   }
@@ -128,10 +135,15 @@ const related = allPosts
     .post-article :global(.toc) {
       display: block;
       position: absolute;
-      /* Position sidebar ~2rem to the right of the prose column */
-      right: calc(-1 * (50vw - 680px / 2) - 14rem - 2rem);
-      top: 0;
+      right: 0;
+      top: 2rem;
       width: 13rem;
+    }
+
+    .post-article :global(.toc .toc-sticky),
+    .post-article :global(.toc.toc-visible) {
+      position: sticky;
+      top: 6rem;
     }
   }
 
@@ -177,7 +189,7 @@ const related = allPosts
   .post-article :global(.prose h2) { font-size: 1.6rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
   .post-article :global(.prose h3) { font-size: 1.3rem; margin-top: 2rem;   margin-bottom: 0.5rem;  }
 
-  /* ── Body images: zoom cursor + hover tint ──────────── */
+  /* ── Body images ─────────────────────────────────────── */
   .post-article :global([data-post-body] img) {
     cursor: zoom-in;
     border-radius: 8px;
@@ -202,8 +214,12 @@ const related = allPosts
   }
 
   @media (max-width: 720px) {
-    .post-article { padding: 1.5rem 1rem 3rem; }
-    .post-article :global(.hero-image) { margin-inline: 0; }
+    .post-article { padding: 1.5rem 0 3rem; }
+    .post-article :global(.hero-image) {
+      width: 100vw;
+      margin-left: calc(-50vw + 50%);
+      margin-right: calc(-50vw + 50%);
+    }
     .post-article :global(.prose .title h1) { font-size: 1.8rem; }
     .post-article :global(.prose) { font-size: 1rem; }
   }
