@@ -3,10 +3,14 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import config from '../content/config/config.json';
-import client from '../../tina/__generated__/client';
-import HomePage from "../../tina/pages/HomePage.tsx";
-const data = await client.queries.page({relativePath: "home.mdx"});
+import { getCollection } from 'astro:content';
+import FormattedDate from '../components/FormattedDate.astro';
 
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const recentPosts = posts.slice(0, 3);
 ---
 
 <!doctype html>
@@ -16,7 +20,349 @@ const data = await client.queries.page({relativePath: "home.mdx"});
 	</head>
 	<body>
 		<Header />
-		<HomePage {...data} client:tina />
+		
+		<main class="home-page">
+			<!-- HERO SECTION — Animated SVG letters + intro -->
+			<section class="hero-section">
+				<div class="hero-content">
+					<div class="hero-letters" aria-hidden="true">
+						<span class="hero-letter" style="animation-delay: 0s">C</span>
+						<span class="hero-letter" style="animation-delay: 0.1s">L</span>
+						<span class="hero-letter" style="animation-delay: 0.2s">I</span>
+						<span class="hero-letter" style="animation-delay: 0.3s">E</span>
+						<span class="hero-letter" style="animation-delay: 0.4s">N</span>
+						<span class="hero-letter" style="animation-delay: 0.5s">T</span>
+						<span class="hero-letter" style="animation-delay: 0.6s">S</span>
+						<span class="hero-letter" style="animation-delay: 0.7s">E</span>
+						<span class="hero-letter" style="animation-delay: 0.8s">E</span>
+						<span class="hero-letter" style="animation-delay: 0.9s">D</span>
+					</div>
+					
+					<h1 class="hero-title">
+						I'm {config.seo.siteOwner}, sharing thoughts on web dev, design, and whatever catches my curiosity.
+					</h1>
+					
+					<p class="hero-description">
+						Welcome to my corner of the internet. I write about front-end development, 
+						design systems, and the occasional deep dive into something that fascinates me. 
+						This site is built with Astro and TinaCMS.
+					</p>
+				</div>
+			</section>
+
+			<!-- RECENT POSTS — Card Grid -->
+			<section class="recent-posts-section">
+				<div class="section-header">
+					<h2 class="section-title">Recent Posts</h2>
+					<a href="/blog" class="view-all-link">View all posts →</a>
+				</div>
+				
+				<div class="posts-grid">
+					{
+						recentPosts.map((post) => (
+							<article class="post-card group">
+								<a href={`/blog/${post.id}/`} class="card-link">
+									<span class="sr-only">Read {post.data.title}</span>
+								</a>
+								
+								<img 
+									class="card-image" 
+									src={post.data.heroImage} 
+									alt="" 
+									loading="lazy" 
+									decoding="async"
+									sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+								/>
+								
+								<div class="card-overlay"></div>
+								
+								<div class="card-content">
+									<h3 class="card-title">{post.data.title}</h3>
+									<p class="card-description">{post.data.description}</p>
+									<p class="card-date">
+										<FormattedDate date={post.data.pubDate} />
+									</p>
+								</div>
+							</article>
+						))
+					}
+				</div>
+			</section>
+		</main>
+		
 		<Footer />
 	</body>
 </html>
+
+<style>
+	/* ── Home Page Layout ──────────────────────────────── */
+	.home-page {
+		max-width: 100%;
+		margin: 0;
+		padding: 0;
+	}
+
+	/* ── Hero Section ──────────────────────────────────── */
+	.hero-section {
+		background: rgb(var(--gray-light));
+		padding: 4rem 2rem 3rem;
+		overflow: hidden;
+	}
+	.dark .hero-section {
+		background: rgb(30, 41, 59);
+	}
+	.hero-content {
+		max-width: 768px;
+		margin: 0 auto;
+		text-align: left;
+	}
+	.hero-letters {
+		display: flex;
+		gap: 0.25rem;
+		margin-bottom: 1.5rem;
+		font-family: 'Montserrat', sans-serif;
+		font-weight: 900;
+		font-size: 3.5rem;
+		line-height: 1;
+		color: rgb(var(--black));
+	}
+	.dark .hero-letters {
+		color: white;
+	}
+	.hero-letter {
+		display: inline-block;
+		opacity: 0;
+		transform: translateY(20px);
+		animation: svg-fade-up 0.6s ease forwards;
+	}
+	@keyframes svg-fade-up {
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+	.hero-title {
+		font-family: 'Montserrat', sans-serif;
+		font-weight: 700;
+		font-size: 1.5rem;
+		line-height: 1.3;
+		letter-spacing: -0.01em;
+		color: rgb(var(--black));
+		margin: 0 0 1rem;
+	}
+	.dark .hero-title {
+		color: white;
+	}
+	.hero-description {
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+		font-size: 1.1rem;
+		line-height: 1.7;
+		color: rgb(var(--gray));
+		margin: 0;
+		max-width: 600px;
+	}
+	.dark .hero-description {
+		color: rgb(148, 163, 184);
+	}
+
+	/* ── Recent Posts Section ──────────────────────────── */
+	.recent-posts-section {
+		padding: 3rem 2rem;
+		max-width: 1800px;
+		margin: 0 auto;
+	}
+	.section-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		margin-bottom: 1.5rem;
+		max-width: 768px;
+		margin-inline: auto;
+		padding: 0;
+	}
+	.section-title {
+		font-family: 'Montserrat', sans-serif;
+		font-weight: 900;
+		font-size: 2rem;
+		letter-spacing: -0.02em;
+		color: rgb(var(--black));
+		margin: 0;
+	}
+	.dark .section-title {
+		color: white;
+	}
+	.view-all-link {
+		font-family: 'Montserrat', sans-serif;
+		font-weight: 600;
+		font-size: 0.875rem;
+		color: var(--accent);
+		text-decoration: none;
+		transition: color 0.15s;
+	}
+	.view-all-link:hover {
+		color: var(--accent-dark);
+		text-decoration: underline;
+	}
+
+	/* ── Posts Grid (Card Layout) ──────────────────────── */
+	.posts-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 0;
+		border-top: 1px solid rgb(var(--gray-light));
+		border-bottom: 1px solid rgb(var(--gray-light));
+	}
+
+	/* ── Card Component ────────────────────────────────── */
+	.post-card {
+		position: relative;
+		isolation: isolate;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		overflow: hidden;
+		background: rgb(var(--gray-dark));
+		min-height: 280px;
+		padding: 1.5rem;
+		border-bottom: 1px solid rgb(var(--gray-light));
+		transition: box-shadow 0.3s ease;
+	}
+	.post-card:last-child {
+		border-bottom: none;
+	}
+	.card-link {
+		position: absolute;
+		inset: 0;
+		z-index: 20;
+	}
+	.card-image {
+		position: absolute;
+		inset: 0;
+		z-index: -10;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.3s ease;
+	}
+	.card-overlay {
+		position: absolute;
+		inset: 0;
+		z-index: -5;
+		background: linear-gradient(
+			to top,
+			rgba(var(--gray-dark), 0.95) 0%,
+			rgba(var(--gray-dark), 0.6) 50%,
+			rgba(var(--gray-dark), 0.2) 100%
+		);
+		transition: opacity 0.3s ease;
+	}
+	.card-content {
+		position: relative;
+		z-index: 10;
+		transform: translateY(0);
+		transition: transform 0.3s ease;
+	}
+	.card-title {
+		font-family: 'Montserrat', sans-serif;
+		font-weight: 700;
+		font-size: 1.25rem;
+		line-height: 1.3;
+		color: white;
+		margin: 0 0 0.5rem;
+		transition: transform 0.3s ease;
+	}
+	.card-description {
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+		font-size: 0.875rem;
+		line-height: 1.5;
+		color: rgba(255, 255, 255, 0.8);
+		margin: 0 0 0.5rem;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		transition: transform 0.3s ease;
+	}
+	.card-date {
+		font-family: 'Montserrat', sans-serif;
+		font-weight: 400;
+		font-size: 0.75rem;
+		color: rgba(255, 255, 255, 0.6);
+		margin: 0;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+	}
+
+	/* ── Conditional Hover Effects ───────────────────── */
+	@media (hover: hover) {
+		.post-card:hover {
+			box-shadow: 0 4px 20px rgba(var(--gray), 0.3);
+		}
+		.post-card:hover .card-image {
+			transform: scale(1.05);
+		}
+		.post-card:hover .card-content {
+			transform: translateY(-2px);
+		}
+		.post-card:hover .card-overlay {
+			opacity: 0.9;
+		}
+	}
+
+	/* ── Responsive ────────────────────────────────────── */
+	@media (min-width: 640px) {
+		.posts-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+		.post-card {
+			border-bottom: none;
+			border-right: 1px solid rgb(var(--gray-light));
+		}
+		.post-card:nth-child(2n) {
+			border-right: none;
+		}
+		.hero-letters {
+			font-size: 4rem;
+		}
+		.hero-title {
+			font-size: 1.8rem;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.posts-grid {
+			grid-template-columns: repeat(3, 1fr);
+		}
+		.post-card {
+			border-right: 1px solid rgb(var(--gray-light));
+		}
+		.post-card:nth-child(2n) {
+			border-right: 1px solid rgb(var(--gray-light));
+		}
+		.post-card:nth-child(3n) {
+			border-right: none;
+		}
+		.hero-letters {
+			font-size: 5rem;
+		}
+		.hero-title {
+			font-size: 2rem;
+		}
+		.hero-section {
+			padding: 5rem 2rem 4rem;
+		}
+	}
+
+	/* Skip link support */
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+</style>
