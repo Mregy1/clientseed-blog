@@ -176,7 +176,7 @@ const related = allPosts
     position: relative;
     z-index: 10;
   }
-  .dark .main-content {
+  html.dark .main-content {
     background: rgb(15, 23, 42);
     color: rgb(226, 232, 240);
   }
@@ -227,6 +227,7 @@ const related = allPosts
     overflow: hidden;
     display: grid;
     place-items: center;
+    background: rgb(var(--gray-dark));
   }
   .hero-image {
     position: absolute;
