@@ -1,92 +1,81 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+
+interface Heading {
+  id: string;
+  text: string;
+  level: string;
+}
 
 export default function TableOfContents() {
-  const navRef = useRef<HTMLElement>(null);
+  const [headings, setHeadings] = useState<Heading[]>([]);
 
   useEffect(() => {
     function buildToc() {
-      const nav = navRef.current;
-      if (!nav) return;
-
-      const list = nav.querySelector('.toc-list');
-      if (!list) return;
-      list.innerHTML = '';
-
       const post = document.querySelector('[data-post-body]');
       if (!post) return;
 
-      const headings = Array.from(post.querySelectorAll('h2, h3')) as HTMLElement[];
-      if (headings.length < 2) {
-        nav.setAttribute('data-toc-empty', 'true');
-        nav.classList.add('toc-hidden');
-        return;
-      }
+      const headingEls = Array.from(post.querySelectorAll('h2, h3')) as HTMLElement[];
+      if (headingEls.length < 2) return;
 
-      nav.removeAttribute('data-toc-empty');
-      nav.classList.remove('toc-hidden');
-
-      headings.forEach((heading, i) => {
-        if (!heading.id) {
-          heading.id = `h-${i}-${(heading.textContent ?? '')
+      const items: Heading[] = headingEls.map((h, i) => {
+        if (!h.id) {
+          h.id = `h-${i}-${(h.textContent ?? '')
             .trim().toLowerCase()
             .replace(/\s+/g, '-')
             .replace(/[^a-z0-9-]/g, '')}`;
         }
-
-        const li = document.createElement('li');
-
-        const a = document.createElement('a');
-        a.href = `#${heading.id}`;
-        a.textContent = heading.textContent ?? '';
-        a.addEventListener('click', (e) => {
-          e.preventDefault();
-          heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          history.pushState(null, '', `#${heading.id}`);
-        });
-
-        li.appendChild(a);
-        list.appendChild(li);
+        return { id: h.id, text: h.textContent ?? '', level: h.tagName };
       });
 
+      setHeadings(items);
+
+      // Scroll-spy: highlight the heading currently in view
       const scrollObs = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            list.querySelectorAll('a').forEach((a) => a.classList.remove('active'));
-            list.querySelector(`a[href="#${entry.target.id}"]`)?.classList.add('active');
+            const toc = document.getElementById('toc');
+            if (!toc) return;
+            toc.querySelectorAll('a').forEach((a) => a.classList.remove('active'));
+            toc.querySelector(`a[href="#${entry.target.id}"]`)?.classList.add('active');
           }
         });
       }, { rootMargin: '-20% 0% -70% 0%' });
 
-      headings.forEach((h) => scrollObs.observe(h));
+      headingEls.forEach((h) => scrollObs.observe(h));
     }
 
-    function waitForBody() {
-      if (document.querySelector('[data-post-body]')) {
-        buildToc();
-      } else {
-        const obs = new MutationObserver(() => {
-          if (document.querySelector('[data-post-body]')) {
-            obs.disconnect();
-            buildToc();
-          }
-        });
-        obs.observe(document.body, { childList: true, subtree: true });
-      }
-    }
+    // Try immediately — [data-post-body] likely already exists in the DOM
+    buildToc();
 
-    document.addEventListener('astro:page-load', waitForBody);
-    waitForBody();
+    // Fallback: if not ready yet, observe until it appears
+    if (!document.querySelector('[data-post-body]')) {
+      const obs = new MutationObserver(() => {
+        if (document.querySelector('[data-post-body]')) {
+          obs.disconnect();
+          buildToc();
+        }
+      });
+      obs.observe(document.body, { childList: true, subtree: true });
+      return () => obs.disconnect();
+    }
   }, []);
+
+  const visible = headings.length >= 2;
 
   return (
     <nav
-      ref={navRef}
-      className="toc toc-hidden"
+      className={`toc ${visible ? 'toc-visible' : 'toc-hidden'}`}
       id="toc"
       aria-label="Table of contents"
     >
       <p className="toc-heading">Contents</p>
-      <ul className="toc-list"></ul>
+      <ul className="toc-list">
+        {headings.map((h) => (
+          <li key={h.id} className={h.level === 'H3' ? 'toc-sub' : ''}>
+            <a href={`#${h.id}`}>{h.text}</a>
+          </li>
+        ))}
+      </ul>
     </nav>
   );
 }
