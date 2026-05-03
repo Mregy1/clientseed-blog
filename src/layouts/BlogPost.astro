@@ -72,14 +72,10 @@ const related = allPosts
         </header>
 
         <!-- ARTICLE BODY -->
-        <div class="post-body-wrapper">
-          <!-- TOC Sidebar — TableOfContents React component mounts here -->
-          <div class="toc-sidebar" id="toc-sidebar">
-            <TableOfContents client:load />
-          </div>
-
-          <!-- Main Content -->
-          <div class="post-content">
+        <div class="post-body-outer">
+          <div class="post-body-wrapper">
+            <!-- Main Content (centered) -->
+            <div class="post-content">
             <!-- Reading time + metadata -->
             <div class="reading-time-bar">
               <span class="reading-time-badge">
@@ -99,7 +95,13 @@ const related = allPosts
             <!-- Breadcrumb at bottom -->
             <Breadcrumb postTitle={title} />
           </div>
+
+          <!-- TOC Sidebar — positioned to the side, outside centered content -->
+          <div class="toc-sidebar" id="toc-sidebar">
+            <TableOfContents client:load />
+          </div>
         </div>
+      </div>
 
         <!-- Related Posts -->
         {related.length > 0 && <RelatedPosts posts={related} />}
@@ -289,16 +291,19 @@ const related = allPosts
   }
 
   /* ── Body Layout ───────────────────────────────────── */
-  .post-body-wrapper {
+  .post-body-outer {
     position: relative;
-    max-width: 768px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 2rem;
+  }
+  .post-body-wrapper {
+    position: relative;
     display: flex;
-    gap: 2rem;
+    justify-content: center;
+    gap: 0;
   }
   .post-content {
-    flex: 1;
     width: 100%;
     max-width: 768px;
     margin: 0 auto;
@@ -313,8 +318,9 @@ const related = allPosts
     .toc-sidebar {
       display: block;
       width: 220px;
-      flex-shrink: 0;
-      position: relative;
+      position: absolute;
+      right: 0;
+      top: 2.5rem;
     }
   }
 
@@ -505,7 +511,7 @@ const related = allPosts
     .post-title {
       font-size: 1.8rem;
     }
-    .post-body-wrapper {
+    .post-body-outer {
       padding: 0 1.25rem;
     }
     .post-content {
