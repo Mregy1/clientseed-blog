@@ -5,7 +5,7 @@ import IconLink from "./react/IconLink";
 ---
 
 <header>
-	<nav aria-label="Global">
+	<nav class="mx-auto flex max-w-(--breakpoint-2xl) items-center justify-between p-4" aria-label="Global">
 		<div class="flex items-center">
 			<a href="/" class="logo-link" aria-label={config.seo.title}>
 				<span class="sr-only">{config.seo.title}</span>
@@ -16,34 +16,27 @@ import IconLink from "./react/IconLink";
 					<text x="24" y="30" text-anchor="middle" fill="white" font-family="Montserrat, sans-serif" font-weight="900" font-size="20">C</text>
 				</svg>
 			</a>
-			<div class="internal-links">
+			<div class="has-links ml-8 flex flex-wrap gap-x-4 lg:gap-x-8 items-center">
 				{
 					config.nav.map((nav) => (
-						<HeaderLink href={nav.link}>{nav.title}</HeaderLink>
+						<a href={nav.link} class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700 dark:focus-visible:outline-red-400">
+							{nav.title}
+						</a>
 					))
 				}
 			</div>
 		</div>
-		<div class="header-right">
+		<div>
 			<!-- Dark Mode Toggle -->
-			<button type="button" id="themeToggle" aria-label="Toggle dark mode" class="theme-toggle">
-				<svg class="sun-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<button type="button" id="themeToggle" aria-label="Toggle dark mode" class="group rounded-full bg-white/90 px-3 py-2.5 shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 backdrop-blur-sm transition dark:bg-slate-800/90 dark:ring-white/10 dark:hover:ring-white/20 toggle">
+				<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="h-6 w-6 fill-zinc-100 stroke-zinc-500 transition group-hover:fill-zinc-200 group-hover:stroke-zinc-700 dark:hidden [@media(prefers-color-scheme:dark)]:fill-teal-50 [@media(prefers-color-scheme:dark)]:stroke-teal-500 [@media(prefers-color-scheme:dark)]:group-hover:fill-teal-50 [@media(prefers-color-scheme:dark)]:group-hover:stroke-teal-600">
 					<path d="M8 12.25A4.25 4.25 0 0 1 12.25 8v0a4.25 4.25 0 0 1 4.25 4.25v0a4.25 4.25 0 0 1-4.25 4.25v0A4.25 4.25 0 0 1 8 12.25v0Z" fill="none"/>
 					<path d="M12.25 3v1.5M21.5 12.25H20M18.791 18.791l-1.06-1.06M18.791 5.709l-1.06 1.06M12.25 20v1.5M4.5 12.25H3M6.77 6.77 5.709 5.709M6.77 17.73l-1.061 1.061" fill="none"/>
 				</svg>
-				<svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true">
-					<path d="M17.25 16.22a6.937 6.937 0 0 1-9.47-9.47 7.451 7.451 0 1 0 9.47 9.47ZM12.75 7C17 7 17 2.75 17 2.75S17 7 21.25 7C17 7 17 11.25 17 11.25S17 7 12.75 7Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+				<svg viewBox="0 0 24 24" aria-hidden="true" class="hidden h-6 w-6 fill-slate-700 stroke-slate-500 transition dark:block [@media(prefers-color-scheme:dark)]:group-hover:stroke-slate-400 not-[@media_(prefers-color-scheme:dark)]:fill-teal-400/10 not-[@media_(prefers-color-scheme:dark)]:stroke-red-400">
+					<path d="M17.25 16.22a6.937 6.937 0 0 1-9.47-9.47 7.451 7.451 0 1 0 9.47 9.47ZM12.75 7C17 7 17 2.75 17 2.75S17 7 21.25 7C17 7 17 11.25 17 11.25S17 7 12.75 7Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 				</svg>
 			</button>
-			<div class="social-links">
-				{
-					config?.contactLinks?.map((link) => {
-						return (
-							<IconLink {...link} />
-						);
-					})
-				}
-			</div>
 		</div>
 	</nav>
 </header>
@@ -97,20 +90,11 @@ import IconLink from "./react/IconLink";
 		z-index: 100;
 	}
 	.dark header {
-		background: rgb(var(--gray-dark));
+		background: rgb(15, 23, 42);
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 	}
-	nav {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		max-width: 1536px;
-		margin: 0 auto;
-		padding: 0.75rem 1rem;
-	}
-	.flex {
-		display: flex;
-		align-items: center;
+	a {
+		text-decoration: none;
 	}
 	.logo-link {
 		display: block;
@@ -125,104 +109,7 @@ import IconLink from "./react/IconLink";
 		height: 48px;
 		border-radius: 50%;
 	}
-	.internal-links {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem 1.5rem;
-		margin-left: 1.5rem;
-	}
-	.internal-links a {
-		padding: 0.5em 0;
-		color: rgb(var(--black));
-		border-bottom: 4px solid transparent;
-		text-decoration: none;
-		font-size: 0.875rem;
-		font-weight: 600;
-		line-height: 1.5;
-		transition: color 0.15s, border-color 0.15s;
-		border-radius: 2px;
-	}
-	.dark .internal-links a {
-		color: rgb(var(--gray-light));
-	}
-	.internal-links a:hover {
-		color: var(--accent);
-	}
-	.internal-links a.active {
-		border-bottom-color: var(--accent);
-	}
-	.header-right {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-	}
-	.theme-toggle {
-		width: 36px;
-		height: 36px;
-		border-radius: 50%;
-		border: 1px solid rgb(var(--gray-light));
-		background: white;
+	.toggle {
 		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 0;
-		transition: background 0.2s, border-color 0.2s;
-	}
-	.dark .theme-toggle {
-		background: rgb(51, 65, 85);
-		border-color: rgb(71, 85, 105);
-	}
-	.theme-toggle:hover {
-		border-color: rgb(var(--gray));
-	}
-	.theme-toggle svg {
-		width: 20px;
-		height: 20px;
-	}
-	.sun-icon {
-		display: block;
-		stroke: rgb(var(--gray));
-		fill: none;
-	}
-	.dark .sun-icon {
-		display: none;
-	}
-	.moon-icon {
-		display: none;
-		stroke: rgb(var(--gray-light));
-		fill: rgb(var(--gray-light));
-	}
-	.dark .moon-icon {
-		display: block;
-	}
-	.social-links,
-	.social-links a {
-		display: flex;
-	}
-	.sr-only {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: -1px;
-		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
-		white-space: nowrap;
-		border: 0;
-	}
-	@media (max-width: 720px) {
-		.social-links {
-			display: none;
-		}
-		.internal-links {
-			margin-left: 0.75rem;
-			gap: 0.5rem 1rem;
-		}
-	}
-	@media (hover: hover) {
-		.internal-links a:hover {
-			color: var(--accent);
-		}
 	}
 </style>
